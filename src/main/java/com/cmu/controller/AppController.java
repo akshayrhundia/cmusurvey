@@ -18,8 +18,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,10 +29,12 @@ import com.cmu.model.FileBucket;
 import com.cmu.model.Question;
 import com.cmu.model.User;
 import com.cmu.model.UserDocument;
+import com.cmu.pojo.TextQuestion;
 import com.cmu.service.QuestionService;
 import com.cmu.service.UserDocumentService;
 import com.cmu.service.UserService;
 import com.cmu.util.FileValidator;
+import com.google.gson.Gson;
 
 
 
@@ -157,18 +161,38 @@ public class AppController {
 		return "newquestion";
 	}
 	
-	@RequestMapping(value = { "/newquestion" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/newquestionastext" }, method = RequestMethod.POST)
 	@ResponseBody
-	public String saveQuestion(@Valid Question que) {
+	public String saveQuestionText(@RequestParam("title") String title,@RequestParam("options") List<String> options) {
 
-		System.out.println(new String(que.getTitle()));
-		if(que.getId()!=null && questionService.findById(que.getId())!=null){
-		    return "Error";
-		}
-		
+		System.out.println(title);
+		//if(que.getId()!=null && questionService.findById(que.getId())!=null){
+		  //  return "Error";
+		//}
+		Question que=new Question();
+		que.setOptions(options);
+		que.setTitle(title.getBytes());
+		que.setTitletype("text");
 		questionService.saveQuestion(que);
 		
 		return "success";
+	}
+	@RequestMapping(value = { "/getAllQuestions" }, method = RequestMethod.GET)
+	@ResponseBody
+	public String getAllQuestions() {
+
+		List<Question> myList=questionService.findAllQuestions();
+		List<TextQuestion> myTList=new ArrayList<TextQuestion>();
+		for(Question que:myList){
+			TextQuestion temp=new TextQuestion();
+			temp.setId(que.getId());
+			temp.setOptions(que.getOptions());
+			temp.setTitle(new String(que.getTitle()));
+			temp.setTitletype(que.getTitletype());
+			myTList.add(temp);
+		}
+		Gson g=new Gson();
+		return g.toJson(myTList);
 	}
 
 

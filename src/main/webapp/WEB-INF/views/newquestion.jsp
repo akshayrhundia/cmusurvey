@@ -120,25 +120,23 @@ $('#titletype').change(function() {
 	});
 	function myFunction(){
 		var type="text";
-		var title = document.getElementById('title');
+		var titles = document.getElementById('title');
 		 var option1 = document.getElementById('option1');
 	     var option2 = document.getElementById('option2');
-	     var titleByte=toUTF8Array(title.value);
+	     //var titleByte=toUTF8Array(title.value);
 	     var opts=[];
 	     opts.push(option1.value);
 	     opts.push(option2.value);
-	     var body={'title':titleByte,'options':opts,'titletype':type};
-		 //alert(JSON.stringify(body));
+	     var body={'title':title.value,'options':opts};
 		 
 	     $.ajax({
-	            url: 'newquestion',
+	    	 		
+	    	    data:{options:opts, title:titles.value},
+	    	    url: 'newquestionastext',
 	            type: 'post',
-	            dataType: 'json',
-	            success: function (data) {
-	                alert(data);
-	            },
-	            data: body
-	        });
+	            traditional: true
+	        }).done(function(data) { alert(data); })
+	        .fail(function() { alert("error"); });
 		 
 	}
 </script>

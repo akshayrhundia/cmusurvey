@@ -1,4 +1,4 @@
-package com.cmu.model;
+package com.cmu.pojo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,15 +21,13 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-@Entity
-@Table(name = "QUESTION")
-public class Question {
+public class TextQuestion {
 
 	
 
 	@Override
 	public String toString() {
-		return "Question [id=" + id + ", titletype=" + titletype + ", title=" + Arrays.toString(title) + ", options="
+		return "Question [id=" + id + ", titletype=" + titletype + ", title=" + title + ", options="
 				+ options + "]";
 	}
 
@@ -41,11 +39,11 @@ public class Question {
 		this.titletype = titletype;
 	}
 
-	public byte[] getTitle() {
+	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(byte[] title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
@@ -57,21 +55,13 @@ public class Question {
 		this.options = options;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 
-	@Column(name = "titletype", length = 100, nullable = false)
 	private String titletype;
 
-	@Lob
-	@Basic(fetch = FetchType.EAGER)
-	@Column(name = "title", nullable = false)
-	private byte[] title;
+	private String title;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Column(name = "options", nullable = false)
 	private List<String> options = new ArrayList<String>();
 
 	public Integer getId() {

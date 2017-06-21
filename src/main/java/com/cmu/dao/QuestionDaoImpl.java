@@ -29,7 +29,7 @@ public class QuestionDaoImpl extends AbstractDao<Integer, Question> implements Q
 
 	@SuppressWarnings("unchecked")
 	public List<Question> findAllQuestions() {
-		Criteria criteria = createEntityCriteria().addOrder(Order.asc("firstName"));
+		Criteria criteria = createEntityCriteria().addOrder(Order.asc("title"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
 		List<Question> Questions = (List<Question>) criteria.list();
 		
