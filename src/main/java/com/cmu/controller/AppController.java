@@ -1,15 +1,24 @@
 package com.cmu.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
@@ -17,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +34,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
 
+import com.cmu.model.Admin;
 import com.cmu.model.FileBucket;
 import com.cmu.model.Question;
 import com.cmu.model.User;
 import com.cmu.model.UserDocument;
 import com.cmu.pojo.TextQuestion;
+import com.cmu.service.AdminService;
 import com.cmu.service.QuestionService;
 import com.cmu.service.UserDocumentService;
 import com.cmu.service.UserService;
@@ -47,6 +60,9 @@ public class AppController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	AdminService adminService;
 	
 	@Autowired
 	UserDocumentService userDocumentService;
@@ -72,6 +88,8 @@ public class AppController {
 		model.addAttribute("users", users);
 		return "userslist";
 	}
+	
+	
 
 	/**
 	 * This method will provide the medium to add a new user.
@@ -97,23 +115,23 @@ public class AppController {
 		}
 
 		/*
-		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation 
-		 * and applying it on field [sso] of Model class [User].
+		 * Preferred way to achieve uniqueness of field [user] should be implementing custom @Unique annotation 
+		 * and applying it on field [user] of Model class [User].
 		 * 
 		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
 		 * framework as well while still using internationalized messages.
 		 * 
 		 */
-		if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
-			FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
-		    result.addError(ssoError);
+		if(!userService.isUseruserUnique(user.getId(), user.getUserId())){
+			FieldError userError =new FieldError("user","userId",messageSource.getMessage("non.unique.userId", new String[]{user.getUserId()}, Locale.getDefault()));
+		    result.addError(userError);
 			return "registration";
 		}
 		
 		userService.saveUser(user);
 		
 		model.addAttribute("user", user);
-		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " registered successfully");
+		model.addAttribute("success", "User " + user.getUserId()+ " registered successfully");
 		//return "success";
 		return "registrationsuccess";
 	}
@@ -127,8 +145,8 @@ public class AppController {
 		
 
 		/*
-		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation 
-		 * and applying it on field [sso] of Model class [User].
+		 * Preferred way to achieve uniqueness of field [user] should be implementing custom @Unique annotation 
+		 * and applying it on field [user] of Model class [User].
 		 * 
 		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
 		 * framework as well while still using internationalized messages.
@@ -136,8 +154,8 @@ public class AppController {
 		 */
 		Question que=new Question();
 		if(que.getId()!=null && questionService.findById(que.getId())!=null){
-			FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{String.valueOf(que.getId())}, Locale.getDefault()));
-		    //result.addError(ssoError);
+			FieldError userError =new FieldError("user","userId",messageSource.getMessage("non.unique.userId", new String[]{String.valueOf(que.getId())}, Locale.getDefault()));
+		    //result.addError(userError);
 			return "registration";
 		}
 		que.setTitle(new String("This is question").getBytes());
@@ -177,10 +195,98 @@ public class AppController {
 		
 		return "success";
 	}
-	@RequestMapping(value = { "/getAllQuestions" }, method = RequestMethod.GET)
+	
+	@RequestMapping(value = { "/newSpeakingFirstPageText" }, method = RequestMethod.POST)
 	@ResponseBody
-	public String getAllQuestions() {
+	public String newSpeakingFirstPageText(@RequestParam("text") String text) {
 
+		Admin temp=new Admin();
+		temp.setSpeakfirstpage(text.getBytes());
+		
+		List<Admin> admins=adminService.findAllAdmins();
+		if(admins.size()>0) {
+			temp=admins.get(admins.size()-1);
+		}
+		//System.out.println(title);
+		//if(que.getId()!=null && questionService.findById(que.getId())!=null){
+		  //  return "Error";
+		//}
+		
+		adminService.saveAdmin(temp);
+		
+		return "success";
+	}
+	
+	@RequestMapping(value = { "/newquestionasaudio" }, method = RequestMethod.POST)
+	@ResponseBody
+	public String saveQuestionAudio(@RequestParam("data") MultipartFile data,@RequestParam("fname") String title,@RequestParam("options") List<String> options) throws IOException {
+
+		System.out.println(data.getBytes());
+		System.out.println(data.getSize());
+		//if(que.getId()!=null && questionService.findById(que.getId())!=null){
+		  //  return "Error";
+		//}
+		Question que=new Question();
+		que.setOptions(options);
+		que.setTitle(data.getBytes());
+		que.setTitletype("Audio");
+		questionService.saveQuestion(que);
+		
+		return "success";
+	}
+	
+	@RequestMapping(value = { "/speak" }, method = RequestMethod.GET)
+	public String getAllAdmin(ModelMap model) {
+		List<Admin> myList=adminService.findAllAdmins();
+		model.addAttribute("speakfirstpage", new String(myList.get(myList.size()-1).getSpeakfirstpage()));
+		model.addAttribute("speakIns", new String(myList.get(myList.size()-1).getSpeakIns()));
+		model.addAttribute("lastpage", new String(myList.get(myList.size()-1).getLastpage()));
+		model.addAttribute("writefirstpage", new String(myList.get(myList.size()-1).getWritefirstpage()));
+		model.addAttribute("writeIns", new String(myList.get(myList.size()-1).getWriteIns()));
+		User user = new User();
+		model.addAttribute("user", user);
+		model.addAttribute("edit", false);
+		
+		return "firstpage";
+	}
+	
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving user in database. It also validates the user input
+	 */
+	@RequestMapping(value = { "/speak" }, method = RequestMethod.POST)
+	public String saveUserRegistration(@Valid User user, BindingResult result,
+			ModelMap model) {
+
+		if (result.hasErrors()) {
+			return "registration";
+		}
+
+		/*
+		 * Preferred way to achieve uniqueness of field [user] should be implementing custom @Unique annotation 
+		 * and applying it on field [user] of Model class [User].
+		 * 
+		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
+		 * framework as well while still using internationalized messages.
+		 * 
+		 */
+		if(!userService.isUseruserUnique(user.getId(), user.getUserId())){
+			FieldError userError =new FieldError("user","userId",messageSource.getMessage("non.unique.userId", new String[]{user.getUserId()}, Locale.getDefault()));
+		    result.addError(userError);
+			return "registration";
+		}
+		
+		userService.saveUser(user);
+		
+		model.addAttribute("user", user);
+		model.addAttribute("success", "User " + user.getUserId()+ " registered successfully");
+		//return "success";
+		return "registrationsuccess";
+	}
+	
+	
+	@RequestMapping(value = { "/getAllQuestions" }, method = RequestMethod.GET)
+	public String getAllQuestions() {
 		List<Question> myList=questionService.findAllQuestions();
 		List<TextQuestion> myTList=new ArrayList<TextQuestion>();
 		for(Question que:myList){
@@ -194,14 +300,49 @@ public class AppController {
 		Gson g=new Gson();
 		return g.toJson(myTList);
 	}
+	
+	@RequestMapping(value = "/getQuestionFile/{qId}")
+	public void  getQuestionFile(@PathVariable("qId") int id,
+	        ModelMap model, HttpServletResponse response) throws IOException,
+	        ServletException {
+		
+       response.setContentType("audio/vnd.wave");
+    
+       response.setHeader("Content-Disposition","attachment; filename=\"" + "que.wav" +"\"");
+       try{    
+    	   Question myQue=questionService.findById(id);
+           System.out.println(myQue.getTitle().length);
+           response.getOutputStream().write(myQue.getTitle());
+           //System.out.println(buffer.length);
+           
+       } catch (IOException e) {
+           e.printStackTrace();
+       }      
+	}
+
+	
+	
+	@RequestMapping(value = { "/managequestions" }, method = RequestMethod.GET)
+	public String managequestions(ModelMap model) {
+		
+		List<Question> myList=questionService.findAllQuestions();
+		for(Question q:myList) {
+			if(q.getTitletype().equalsIgnoreCase("text")) {
+				q.setTitletype(new String(q.getTitle()));
+			}
+		}
+		model.addAttribute("managequestions", myList);
+		
+		return "managequestions";
+	}
 
 
 	/**
 	 * This method will provide the medium to update an existing user.
 	 */
-	@RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.GET)
-	public String editUser(@PathVariable String ssoId, ModelMap model) {
-		User user = userService.findBySSO(ssoId);
+	@RequestMapping(value = { "/edit-user-{userId}" }, method = RequestMethod.GET)
+	public String editUser(@PathVariable String userId, ModelMap model) {
+		User user = userService.findByuser(userId);
 		model.addAttribute("user", user);
 		model.addAttribute("edit", true);
 		return "registration";
@@ -211,9 +352,9 @@ public class AppController {
 	 * This method will be called on form submission, handling POST request for
 	 * updating user in database. It also validates the user input
 	 */
-	@RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/edit-user-{userId}" }, method = RequestMethod.POST)
 	public String updateUser(@Valid User user, BindingResult result,
-			ModelMap model, @PathVariable String ssoId) {
+			ModelMap model, @PathVariable String userId) {
 
 		if (result.hasErrors()) {
 			return "registration";
@@ -221,17 +362,17 @@ public class AppController {
 
 		userService.updateUser(user);
 
-		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " updated successfully");
+		model.addAttribute("success", "User " + user.getUserId() + " updated successfully");
 		return "registrationsuccess";
 	}
 
 	
 	/**
-	 * This method will delete an user by it's SSOID value.
+	 * This method will delete an user by it's userID value.
 	 */
-	@RequestMapping(value = { "/delete-user-{ssoId}" }, method = RequestMethod.GET)
-	public String deleteUser(@PathVariable String ssoId) {
-		userService.deleteUserBySSO(ssoId);
+	@RequestMapping(value = { "/delete-user-{userId}" }, method = RequestMethod.GET)
+	public String deleteUser(@PathVariable String userId) {
+		userService.deleteUserByuser(userId);
 		return "redirect:/list";
 	}
 	
@@ -250,6 +391,8 @@ public class AppController {
 		
 		return "managedocuments";
 	}
+	
+	
 	
 
 	@RequestMapping(value = { "/download-document-{userId}-{docId}" }, method = RequestMethod.GET)

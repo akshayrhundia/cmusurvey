@@ -20,11 +20,11 @@
 		
 		<div class="row">
 			<div class="form-group col-md-12">
-				<label class="col-md-3 control-lable" for="firstName">First Name</label>
+				<label class="col-md-3 control-lable" for="gender">Gender</label>
 				<div class="col-md-7">
-					<form:input type="text" path="firstName" id="firstName" class="form-control input-sm"/>
+					<form:input type="text" path="gender" id="gender" class="form-control input-sm"/>
 					<div class="has-error">
-						<form:errors path="firstName" class="help-inline"/>
+						<form:errors path="gender" class="help-inline"/>
 					</div>
 				</div>
 			</div>
@@ -32,11 +32,11 @@
 
 		<div class="row">
 			<div class="form-group col-md-12">
-				<label class="col-md-3 control-lable" for="lastName">Last Name</label>
+				<label class="col-md-3 control-lable" for="age">Age</label>
 				<div class="col-md-7">
-					<form:input type="text" path="lastName" id="lastName" class="form-control input-sm" />
+					<form:input type="text" path="age" id="age" class="form-control input-sm" />
 					<div class="has-error">
-						<form:errors path="lastName" class="help-inline"/>
+						<form:errors path="age" class="help-inline"/>
 					</div>
 				</div>
 			</div>
@@ -44,16 +44,16 @@
 
 		<div class="row">
 			<div class="form-group col-md-12">
-				<label class="col-md-3 control-lable" for="ssoId">SSO ID</label>
+				<label class="col-md-3 control-lable" for="userId">user ID</label>
 				<div class="col-md-7">
 					<c:choose>
 						<c:when test="${edit}">
-							<form:input type="text" path="ssoId" id="ssoId" class="form-control input-sm" disabled="true"/>
+							<form:input type="text" path="userId" id="userId" class="form-control input-sm" disabled="true"/>
 						</c:when>
 						<c:otherwise>
-							<form:input type="text" path="ssoId" id="ssoId" class="form-control input-sm" />
+							<form:input type="text" path="userId" id="userId" class="form-control input-sm" />
 							<div class="has-error">
-								<form:errors path="ssoId" class="help-inline"/>
+								<form:errors path="userId" class="help-inline"/>
 							</div>
 						</c:otherwise>
 					</c:choose>
@@ -63,11 +63,11 @@
 
 		<div class="row">
 			<div class="form-group col-md-12">
-				<label class="col-md-3 control-lable" for="email">Email</label>
+				<label class="col-md-3 control-lable" for="occupation">occupation</label>
 				<div class="col-md-7">
-					<form:input type="text" path="email" id="email" class="form-control input-sm" />
+					<form:input type="text" path="occupation" id="occupation" class="form-control input-sm" />
 					<div class="has-error">
-						<form:errors path="email" class="help-inline"/>
+						<form:errors path="occupation" class="help-inline"/>
 					</div>
 				</div>
 			</div>

@@ -9,16 +9,16 @@ public interface UserService {
 	
 	User findById(int id);
 	
-	User findBySSO(String sso);
+	User findByuser(String user);
 	
 	void saveUser(User user);
 	
 	void updateUser(User user);
 	
-	void deleteUserBySSO(String sso);
+	void deleteUserByuser(String user);
 
 	List<User> findAllUsers(); 
 	
-	boolean isUserSSOUnique(Integer id, String sso);
+	boolean isUseruserUnique(Integer id, String user);
 
 }
