@@ -51,7 +51,15 @@
 					</div>
 					<div class="panel-body">
 						<div class="tab-content">
-							<div class="tab-pane active" id="test">${speakfirstpage }</div>
+							<div class="tab-pane active" id="test">
+							<c:if test="${not empty speakfirstpage}">
+    							${speakfirstpage}
+							</c:if>
+							<c:if test="${not empty writefirstpage}">
+    							${writefirstpage}
+							</c:if>
+							
+							</div>
 						</div>
 					</div>
 				</div>
