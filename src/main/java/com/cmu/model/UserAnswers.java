@@ -38,6 +38,18 @@ public class UserAnswers implements Serializable {
 	@Id
 	@Column(name = "type")
 	private String type;
+	
+	@Id
+	@Column(name = "qtype")
+	private String qtype;
+
+	public String getQtype() {
+		return qtype;
+	}
+
+	public void setQtype(String qtype) {
+		this.qtype = qtype;
+	}
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)

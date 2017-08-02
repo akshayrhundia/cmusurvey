@@ -50,8 +50,31 @@
 						<tr>
 							<td>${ans.qId}</td>
 							<td>${ans.userId}</td>
-							<td>${ans.que}</td>
-							<td>${ans.reply}</td>
+							<c:choose>
+								<c:when test = "${ans.qtype == 'Audio'}">
+									<td><audio controls><source src="getQuestionFile/${ans.qId}" type="audio/wav" /></td>
+      							</c:when>
+      							<c:when test = "${ans.qtype == 'Video'}">
+      								<td>
+      								</td>
+      							</c:when>
+      							<c:otherwise>
+      								<td>${ans.qtype}</td>
+    							</c:otherwise>
+      						</c:choose>
+      						
+      						<c:choose>
+								<c:when test = "${ans.type == 'Audio'}">
+									<td><audio controls><source src="getQuestionFile/${ans.qId}" type="audio/wav" /></td>
+      							</c:when>
+      							<c:when test = "${ans.type == 'Video'}">
+      								<td>
+      								</td>
+      							</c:when>
+      							<c:otherwise>
+      								<td>${ans.type}</td>
+    							</c:otherwise>
+      						</c:choose>
 						</tr>
 					</c:forEach>
 				

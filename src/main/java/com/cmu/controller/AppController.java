@@ -328,7 +328,8 @@ public class AppController {
 			UserAnswers ans = new UserAnswers();
 			ans.setqId(qId);
 			ans.setReply(reply.getBytes());
-			ans.setType("text");
+			ans.setType(que.getTitletype());
+			ans.setQtype("text");
 			ans.setUserId((String) request.getSession().getAttribute("username"));
 			ans.setQue(que.getTitle());
 			if (userAnsService.findUserAnswerByQuestionId(qId,
@@ -499,6 +500,15 @@ public class AppController {
 	public String getResults(ModelMap model,@PathVariable String userId) {
 		System.out.println(userId);
 		List<UserAnswers> ans = userAnsService.findAllUserAnswers(userId);
+		for (UserAnswers q : ans) {
+			if (q.getType().equalsIgnoreCase("text")) {
+				q.setType(new String(q.getReply()));
+			}
+			if (q.getQtype().equalsIgnoreCase("text")) {
+				q.setQtype(new String(q.getQue()));
+			}
+		}
+		
 		System.out.println(ans.size());
 		model.addAttribute("answers", ans);
 		return "useranswers";

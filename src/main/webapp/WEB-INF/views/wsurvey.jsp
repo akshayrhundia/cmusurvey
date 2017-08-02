@@ -47,7 +47,20 @@
 				<div class="modal-content">
 					<div class="modal-header" style="height: 100px;">
 						<h3>
-							<span id="qid">${question.titletype}</span>
+							<span id="qid">${question.titletype}
+							
+							<c:choose>
+								<c:when test = "${question.titletype == 'Audio'}">
+									<audio controls><source src="../getQuestionFile/${question.id}" type="audio/wav" />
+      							</c:when>
+      							<c:when test = "${question.titletype == 'Video'}">
+      							</c:when>
+      							<c:otherwise>
+      								${question.titletype}
+    							</c:otherwise>
+      						</c:choose>
+      						</span>
+      						
 						</h3>
 					</div>
 					<div class="modal-body">
