@@ -52,7 +52,7 @@
 							<td>${ans.userId}</td>
 							<c:choose>
 								<c:when test = "${ans.qtype == 'Audio'}">
-									<td><audio controls><source src="getQuestionFile/${ans.qId}" type="audio/wav" /></td>
+									<td><audio controls><source src="../getQuestionFile/${ans.qId}" type="audio/wav" /></td>
       							</c:when>
       							<c:when test = "${ans.qtype == 'Video'}">
       								<td>
@@ -65,7 +65,7 @@
       						
       						<c:choose>
 								<c:when test = "${ans.type == 'Audio'}">
-									<td><audio controls><source src="getQuestionFile/${ans.qId}" type="audio/wav" /></td>
+									<td><audio controls><source src="/ans" type="audio/wav" /></td>
       							</c:when>
       							<c:when test = "${ans.type == 'Video'}">
       								<td>

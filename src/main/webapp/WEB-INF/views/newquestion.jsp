@@ -5,12 +5,14 @@
 
 <html>
 
+
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>User Registration Form</title>
 <link href="<c:url value='/static/css/bootstrap.css' />"
 	rel="stylesheet"></link>
 <link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"
 	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -33,66 +35,93 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 	crossorigin="anonymous"></script>
-	
-	<style type='text/css'>
-    ul { list-style: none; }
-    #recordingslist audio { display: block; margin-bottom: 10px; }
-  </style>
-  
-   <script src="~/../static/dist/recorder.js"></script>
-  
+
+<style type='text/css'>
+ul {
+	list-style: none;
+}
+
+#recordingslist audio {
+	display: block;
+	margin-bottom: 10px;
+}
+</style>
+
+<script src="~/../static/dist/recorder.js"></script>
+
 </head>
 
 <body>
-
-	<div class="container">
-		<h2>Registration Form</h2>
-
-
-		<div class="form-group">
-			<label for="titletype" onchange="getComboA(this)"
-				class="col-sm-3 control-label">Type</label>
-			<div class="col-sm-9">
-				<select id="titletype" class="form-control">
-					<option value="Text">Text</option>
-					<option value="Video">Video</option>
-					<option value="Audio">Audio</option>
-
-				</select>
+<div class="loading" id="loading">Loading&#8230;</div>
+	<div class="generic-container">
+		<div class="panel panel-default">
+			<!-- Default panel contents -->
+			<div class="panel-heading">
+				<span class="lead">New question form </span>
 			</div>
-		</div>
+			<div class="tablecontainer">
+				<table class="table table-hover">
+				<tr>
+				<td>
+				<div class="form-group">
+					<label for="titletype" onchange="getComboA(this)"
+						class="col-sm-3 control-label">Type</label>
+					<div class="col-sm-9">
+						<select id="titletype" class="form-control">
+							<option value="Text">Text</option>
+							<option value="Video">Video</option>
+							<option value="Audio">Audio</option>
 
-		<div class="form-group" id="typeUpdate">
-			<label for="title" class="col-sm-3 control-label">Question</label>
-			<div class="col-sm-9" id="que">
-				<input type="text" id="title" placeholder="Question"
-					class="form-control" autofocus>
-			</div>
-			<div class="col-sm-12"></div>
-			<label for="option1" class="col-sm-3 control-label">Option 1</label>
+						</select>
+					</div>
+				</div>
+				
+				<div class="form-group" id="typeUpdate">
+					<label for="title" class="col-sm-3 control-label">Question</label>
+					<div class="col-sm-9" id="que">
+						<input type="text" id="title" placeholder="Question"
+							class="form-control" autofocus>
+					</div>
+				</div>
+				<div class="form-group" id="typeUpdate">
+					<div class="col-sm-12"></div>
+					<label for="option1" class="col-sm-3 control-label">Option
+						1</label>
+			
+					<div class="col-sm-9">
+						<input type="text" id="option1" placeholder="Option 1"
+							class="form-control" autofocus>
+					</div>
+				</div>
+				<div class="form-group" id="typeUpdate">
+					<div class="col-sm-12"></div>
+					<label for="option2" class="col-sm-3 control-label">Option
+						2</label>
 
-			<div class="col-sm-9">
-				<input type="text" id="option1" placeholder="Option 1"
-					class="form-control" autofocus>
+					<div class="col-sm-9">
+						<input type="text" id="option2" placeholder="Option 2"
+							class="form-control" autofocus>
+					</div>
+				</div>
+					<div class="col-sm-12"></div>
+					<div class="col-sm-3 col-sm-offset-3">
+						<button type="submit" onclick="myFunction()"
+							class="btn btn-primary btn-block">Add Question</button>
+					</div>
+				</td>
+				</tr>
+				</table>
 			</div>
-			<div class="col-sm-12"></div>
-			<label for="option2" class="col-sm-3 control-label">Option 2</label>
-
-			<div class="col-sm-9">
-				<input type="text" id="option2" placeholder="Option 2"
-					class="form-control" autofocus>
-			</div>
-			<div class="col-sm-12"></div>
-			<div class="col-sm-3 col-sm-offset-3">
-				<button type="submit" onclick="myFunction()"
-					class="btn btn-primary btn-block">Add Question</button>
-			</div>
+			
 		</div>
 	</div>
- 
 
+	<script>
+$(document).ready(function(){
+	$('#loading').hide();
+	});
+	
 
-<script>
 var gBlob=null;
  
   var audio_context;
@@ -161,8 +190,8 @@ var gBlob=null;
   };
   </script>
 
- 
-  
+
+
 	<script>
 	function toUTF8Array(str) {
 	    var utf8 = [];
@@ -232,9 +261,11 @@ $('#titletype').change(function() {
 		      }).done(function(data) {
 		    	  window.location.replace("newquestion");
 		      }).fail(function() { alert("error"); });
+		     
 		   
 	}
 	function myFunction(){
+		 $('#loading').show();
 		if($('#titletype').val()==="Audio")
 			saveMyAudio();
 		if($('#titletype').val()==="Text")
@@ -262,8 +293,10 @@ $('#titletype').change(function() {
 	        }).done(function(data) {
 	        	
 	        	window.location.replace("newquestion");
+	        	
 	        })
 	        .fail(function() { alert("error"); });
+	     $('#loading').show();
 	}
 </script>
 

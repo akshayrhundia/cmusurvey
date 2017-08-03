@@ -328,8 +328,8 @@ public class AppController {
 			UserAnswers ans = new UserAnswers();
 			ans.setqId(qId);
 			ans.setReply(reply.getBytes());
-			ans.setType(que.getTitletype());
-			ans.setQtype("text");
+			ans.setType("text");
+			ans.setQtype(que.getTitletype());
 			ans.setUserId((String) request.getSession().getAttribute("username"));
 			ans.setQue(que.getTitle());
 			if (userAnsService.findUserAnswerByQuestionId(qId,
