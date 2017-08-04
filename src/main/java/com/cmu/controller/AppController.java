@@ -43,6 +43,7 @@ import com.cmu.model.Question;
 import com.cmu.model.User;
 import com.cmu.model.UserAnswers;
 import com.cmu.model.UserDocument;
+import com.cmu.pojo.AdminPojo;
 import com.cmu.pojo.TextQuestion;
 import com.cmu.service.AdminService;
 import com.cmu.service.QuestionService;
@@ -103,6 +104,15 @@ public class AppController {
 		model.addAttribute("edit", false);
 		return "registration";
 	}
+	
+	/**
+	 * This method will provide the medium to add a new user.
+	 */
+	@RequestMapping(value = { "/admin" }, method = RequestMethod.GET)
+	public String admin(ModelMap model) {
+		return "admin";
+	}
+	
 
 	/**
 	 * This method will be called on form submission, handling POST request for
@@ -222,6 +232,21 @@ public class AppController {
 		adminService.saveAdmin(temp);
 
 		return "success";
+	}
+	
+	@RequestMapping(value = { "/getAdmin" }, method = RequestMethod.GET)
+	@ResponseBody
+	public String getAdmin() {
+
+		List<Admin> admins = adminService.findAllAdmins();
+		Admin temp=admins.get(admins.size()-1);
+		AdminPojo adminPojo=new AdminPojo();
+		adminPojo.setLastpage(new String(temp.getLastpage()));
+		adminPojo.setSpeakfirstpage(new String(temp.getSpeakfirstpage()));
+		adminPojo.setSpeakIns(new String(temp.getSpeakIns()));
+		adminPojo.setWritefirstpage(new String(temp.getWritefirstpage()));
+		adminPojo.setWriteIns(new String(temp.getWriteIns()));
+		return new Gson().toJson(adminPojo);
 	}
 
 	@RequestMapping(value = { "/newquestionasaudio" }, method = RequestMethod.POST)
