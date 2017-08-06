@@ -83,238 +83,78 @@ public class AppController {
 		binder.setValidator(fileValidator);
 	}
 
-	/**
-	 * This method will list all existing users.
-	 */
-	@RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
-	public String listUsers(ModelMap model) {
-
-		List<User> users = userService.findAllUsers();
-		model.addAttribute("users", users);
-		return "userslist";
-	}
-
-	/**
-	 * This method will provide the medium to add a new user.
-	 */
-	@RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
-	public String newUser(ModelMap model) {
-		User user = new User();
-		model.addAttribute("user", user);
-		model.addAttribute("edit", false);
-		return "registration";
-	}
-	
-	/**
-	 * This method will provide the medium to add a new user.
-	 */
-	@RequestMapping(value = { "/admin" }, method = RequestMethod.GET)
-	public String admin(ModelMap model) {
-		return "admin";
-	}
-	
-
-	/**
-	 * This method will be called on form submission, handling POST request for
-	 * saving user in database. It also validates the user input
-	 */
-	@RequestMapping(value = { "/newuser" }, method = RequestMethod.POST)
-	public String saveUser(@Valid User user, BindingResult result, ModelMap model) {
-
-		if (result.hasErrors()) {
-			return "registration";
-		}
-
-		/*
-		 * Preferred way to achieve uniqueness of field [user] should be implementing
-		 * custom @Unique annotation and applying it on field [user] of Model class
-		 * [User].
-		 * 
-		 * Below mentioned peace of code [if block] is to demonstrate that you can fill
-		 * custom errors outside the validation framework as well while still using
-		 * internationalized messages.
-		 * 
-		 */
-		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
-			FieldError userError = new FieldError("user", "userId", messageSource.getMessage("non.unique.userId",
-					new String[] { user.getUserId() }, Locale.getDefault()));
-			result.addError(userError);
-			return "registration";
-		}
-
-		userService.saveUser(user);
-
-		model.addAttribute("user", user);
-		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
-		// return "success";
-		return "registrationsuccess";
-	}
-
-	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
-	@ResponseBody
-	public String saveQuestion() {
-
-		/*
-		 * Preferred way to achieve uniqueness of field [user] should be implementing
-		 * custom @Unique annotation and applying it on field [user] of Model class
-		 * [User].
-		 * 
-		 * Below mentioned peace of code [if block] is to demonstrate that you can fill
-		 * custom errors outside the validation framework as well while still using
-		 * internationalized messages.
-		 * 
-		 */
-		/*Question que = new Question();
-		if (que.getId() != null && questionService.findById(que.getId()) != null) {
-			FieldError userError = new FieldError("user", "userId", messageSource.getMessage("non.unique.userId",
-					new String[] { String.valueOf(que.getId()) }, Locale.getDefault()));
-			// result.addError(userError);
-			return "registration";
-		}
-		que.setTitle(new String("This is question").getBytes());
-		que.setTitletype("text");
-		List<String> options = new ArrayList<String>();
-		options.add("Yes");
-		options.add("No");
-
-		que.setOptions(options);
-
-		questionService.saveQuestion(que);*/
-
-		// model.addAttribute("que", que);
-		// model.addAttribute("success", "que " + que.getId() + " registered
-		// successfully");
-		// return "success";
-		List<UserAnswers> ans = userAnsService.findAllUserAnswers("ahundia");
-		System.out.println(ans.size());
-		return new Gson().toJson(ans);
-		
-	}
-
-	@RequestMapping(value = { "/newquestion" }, method = RequestMethod.GET)
-	public String newQuestion(ModelMap model) {
-		return "newquestion";
-	}
-
-	@RequestMapping(value = { "/newquestionastext" }, method = RequestMethod.POST)
-	@ResponseBody
-	public String saveQuestionText(@RequestParam("title") String title, @RequestParam("options") List<String> options) {
-
-		System.out.println(title);
-		// if(que.getId()!=null && questionService.findById(que.getId())!=null){
-		// return "Error";
-		// }
-		Question que = new Question();
-		que.setOptions(options);
-		que.setTitle(title.getBytes());
-		que.setTitletype("text");
-		questionService.saveQuestion(que);
-
-		return "success";
-	}
-
-	@RequestMapping(value = { "/newSpeakingFirstPageText" }, method = RequestMethod.POST)
-	@ResponseBody
-	public String newSpeakingFirstPageText(@RequestParam("text") String text) {
-
-		Admin temp = new Admin();
-		temp.setSpeakfirstpage(text.getBytes());
-
-		List<Admin> admins = adminService.findAllAdmins();
-		if (admins.size() > 0) {
-			temp = admins.get(admins.size() - 1);
-		}
-		// System.out.println(title);
-		// if(que.getId()!=null && questionService.findById(que.getId())!=null){
-		// return "Error";
-		// }
-
-		adminService.saveAdmin(temp);
-
-		return "success";
-	}
-	
-	@RequestMapping(value = { "/getAdmin" }, method = RequestMethod.GET)
-	@ResponseBody
-	public String getAdmin() {
-
-		List<Admin> admins = adminService.findAllAdmins();
-		Admin temp=admins.get(admins.size()-1);
-		AdminPojo adminPojo=new AdminPojo();
-		adminPojo.setLastpage(new String(temp.getLastpage()));
-		adminPojo.setSpeakfirstpage(new String(temp.getSpeakfirstpage()));
-		adminPojo.setSpeakIns(new String(temp.getSpeakIns()));
-		adminPojo.setWritefirstpage(new String(temp.getWritefirstpage()));
-		adminPojo.setWriteIns(new String(temp.getWriteIns()));
-		return new Gson().toJson(adminPojo);
-	}
-
-	@RequestMapping(value = { "/newquestionasaudio" }, method = RequestMethod.POST)
-	@ResponseBody
-	public String saveQuestionAudio(@RequestParam("data") MultipartFile data, @RequestParam("fname") String title,
-			@RequestParam("options") List<String> options) throws IOException {
-
-		System.out.println(data.getBytes());
-		System.out.println(data.getSize());
-		// if(que.getId()!=null && questionService.findById(que.getId())!=null){
-		// return "Error";
-		// }
-		Question que = new Question();
-		que.setOptions(options);
-		que.setTitle(data.getBytes());
-		que.setTitletype("Audio");
-		questionService.saveQuestion(que);
-
-		return "success";
-	}
-
 	@RequestMapping(value = { "/speak" }, method = RequestMethod.GET)
 	public String getAllAdmin(ModelMap model) {
 		List<Admin> myList = adminService.findAllAdmins();
 		model.addAttribute("speakfirstpage", new String(myList.get(myList.size() - 1).getSpeakfirstpage()));
-		/*
-		 * model.addAttribute("speakIns", new
-		 * String(myList.get(myList.size()-1).getSpeakIns()));
-		 * model.addAttribute("lastpage", new
-		 * String(myList.get(myList.size()-1).getLastpage()));
-		 * model.addAttribute("writefirstpage", new
-		 * String(myList.get(myList.size()-1).getWritefirstpage()));
-		 * model.addAttribute("writeIns", new
-		 * String(myList.get(myList.size()-1).getWriteIns()));
-		 */
 		User user = new User();
 		model.addAttribute("user", user);
-		model.addAttribute("edit", false);
-
 		return "firstpage";
 	}
 
 	@RequestMapping(value = { "/write" }, method = RequestMethod.GET)
 	public String getFirstWritePage(ModelMap model) {
 		List<Admin> myList = adminService.findAllAdmins();
-		/*
-		 * model.addAttribute("speakfirstpage", new
-		 * String(myList.get(myList.size()-1).getSpeakfirstpage()));
-		 * model.addAttribute("speakIns", new
-		 * String(myList.get(myList.size()-1).getSpeakIns()));
-		 * model.addAttribute("lastpage", new
-		 * String(myList.get(myList.size()-1).getLastpage()));
-		 */
 		model.addAttribute("writefirstpage", new String(myList.get(myList.size() - 1).getWritefirstpage()));
-		/*
-		 * model.addAttribute("writeIns", new
-		 * String(myList.get(myList.size()-1).getWriteIns()));
-		 */
 		User user = new User();
 		model.addAttribute("user", user);
-		model.addAttribute("edit", false);
-
 		return "firstpage";
 	}
 
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving user in database. It also validates the user input
+	 */
+	@RequestMapping(value = { "/speak" }, method = RequestMethod.POST)
+	public String saveUserRegistration(@Valid User user, BindingResult result, ModelMap model,
+			HttpServletRequest request) {
+
+		if (result.hasErrors()) {
+			return "speak";
+		}
+
+		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
+			model.addAttribute("user", user);
+			request.getSession().setAttribute("username", user.getUserId());
+			return "redirect:speakins";
+		}
+
+		userService.saveUser(user);
+
+		model.addAttribute("user", user);
+		request.getSession().setAttribute("username", user.getUserId());
+		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
+		return "redirect:speakins";
+	}
+
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving user in database. It also validates the user input
+	 */
+	@RequestMapping(value = { "/write" }, method = RequestMethod.POST)
+	public String saveWriteSurvey(@Valid User user, BindingResult result, ModelMap model, HttpServletRequest request) {
+
+		if (result.hasErrors()) {
+			return "write";
+		}
+
+		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
+			model.addAttribute("user", user);
+			request.getSession().setAttribute("username", user.getUserId());
+			return "redirect:writeins";
+		}
+
+		userService.saveUser(user);
+
+		model.addAttribute("user", user);
+		request.getSession().setAttribute("username", user.getUserId());
+		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
+		return "redirect:writeins";
+	}
 	@RequestMapping(value = { "/speakins" }, method = RequestMethod.GET)
 	public String getSpeakInstructions(ModelMap model) {
 		List<Admin> myList = adminService.findAllAdmins();
+		model.addAttribute("qId", "1");
 		model.addAttribute("survey", "speaksurvey");
 		model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
 		return "instructions";
@@ -328,7 +168,7 @@ public class AppController {
 		model.addAttribute("writeIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
 		return "instructions";
 	}
-
+	
 	@RequestMapping(value = { "/writesurvey/{qId}" }, method = RequestMethod.GET)
 	public String getWritesurvey(@PathVariable("qId") int qId, ModelMap model) {
 
@@ -341,10 +181,31 @@ public class AppController {
 			model.addAttribute("qId", que.getId() + 1);
 			return "wsurvey";
 		} else {
+			List<Admin> admins = adminService.findAllAdmins();
+			Admin temp = admins.get(admins.size() - 1);
+			model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
 			return "over";
 		}
 	}
+	@RequestMapping(value = { "/speaksurvey/{qId}" }, method = RequestMethod.GET)
+	public String getSpeakSurvey(@PathVariable("qId") int qId, ModelMap model) {
 
+		Question que = questionService.findById(qId);
+		if (que != null) {
+			if (que.getTitletype().equalsIgnoreCase("text")) {
+				que.setTitletype(new String(que.getTitle()));
+			}
+			model.addAttribute("question", que);
+			model.addAttribute("qId", que.getId() + 1);
+			return "ssurvey";
+		} else {
+			List<Admin> admins = adminService.findAllAdmins();
+			Admin temp = admins.get(admins.size() - 1);
+			model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
+			return "over";
+		}
+	}
+	
 	@RequestMapping(value = { "/savewriteans" }, method = RequestMethod.POST)
 	public String saveAnswerText(HttpServletRequest request, @RequestParam("reply") String reply,
 			@RequestParam("qId") Integer qId) {
@@ -368,96 +229,123 @@ public class AppController {
 			return "redirect:writesurvey/" + (qId);
 		}
 	}
+	
+	@RequestMapping(value = { "/savespeakans" }, method = RequestMethod.POST)
+	public String saveAnswerAudio(HttpServletRequest request, @RequestParam("reply") MultipartFile reply,
+			@RequestParam("qId") Integer qId) throws IOException {
+		Question que = questionService.findById(qId);
+		if (que != null) {
+			UserAnswers ans = new UserAnswers();
+			ans.setqId(qId);
+			ans.setReply(reply.getBytes());
+			ans.setType("text");
+			ans.setQtype(que.getTitletype());
+			ans.setUserId((String) request.getSession().getAttribute("username"));
+			ans.setQue(que.getTitle());
+			if (userAnsService.findUserAnswerByQuestionId(qId,
+					(String) request.getSession().getAttribute("username")) != null) {
+				userAnsService.updateUserAnswer(ans);
+			} else {
+				userAnsService.saveUserAnswer(ans);
+			}
+			return "redirect:speaksurvey/" + (qId + 1);
+		} else {
+			return "redirect:speaksurvey/" + (qId);
+		}
+	}
+	
+	@RequestMapping(value = { "/last" }, method = RequestMethod.GET)
+	public String getLastPage(ModelMap model, HttpServletRequest request) {
+		List<Admin> myList = adminService.findAllAdmins();
+		model.addAttribute("lastpage", new String(myList.get(myList.size() - 1).getLastpage()));
+		request.getSession().setAttribute("username", null);
+		return "last";
+	}
+	
+	
+	/*************** Admin *************************/
+	@RequestMapping(value = { "/admin" }, method = RequestMethod.GET)
+	public String admin(ModelMap model) {
+		return "admin";
+	}
+	
+	@RequestMapping(value = { "/addAdmin" }, method = RequestMethod.POST)
+	@ResponseBody
+	public String newSpeakingFirstPageText(@RequestParam("speakfirstpage") String speakfirstpage, String writefirstpage,
+			@RequestParam("speakIns") String speakIns, @RequestParam("writeIns") String writeIns,
+			@RequestParam("lastpage") String lastpage, @RequestParam("secondlastpage") String secondlastpage) {
 
-	@RequestMapping(value = { "/speaksurvey" }, method = RequestMethod.GET)
-	public String getSpeaksurvey(ModelMap model) {
-		return "ssurvey";
+		Admin temp = new Admin();
+		temp.setSpeakfirstpage(speakfirstpage.getBytes());
+		temp.setLastpage(lastpage.getBytes());
+		temp.setSecondlastpage(secondlastpage.getBytes());
+		temp.setSpeakIns(speakIns.getBytes());
+		temp.setWritefirstpage(writefirstpage.getBytes());
+		temp.setWriteIns(writeIns.getBytes());
+		adminService.saveAdmin(temp);
+		return "success";
 	}
 
-	/**
-	 * This method will be called on form submission, handling POST request for
-	 * saving user in database. It also validates the user input
-	 */
-	@RequestMapping(value = { "/write" }, method = RequestMethod.POST)
-	public String saveWriteSurvey(@Valid User user, BindingResult result, ModelMap model, HttpServletRequest request) {
+	@RequestMapping(value = { "/getAdmin" }, method = RequestMethod.GET)
+	@ResponseBody
+	public String getAdmin() {
+		List<Admin> admins = adminService.findAllAdmins();
+		Admin temp = admins.get(admins.size() - 1);
+		AdminPojo adminPojo = new AdminPojo();
+		adminPojo.setLastpage(new String(temp.getLastpage()));
+		adminPojo.setSpeakfirstpage(new String(temp.getSpeakfirstpage()));
+		adminPojo.setSpeakIns(new String(temp.getSpeakIns()));
+		adminPojo.setWritefirstpage(new String(temp.getWritefirstpage()));
+		adminPojo.setWriteIns(new String(temp.getWriteIns()));
+		adminPojo.setSecondlastpage(new String(temp.getSecondlastpage()));
+		return new Gson().toJson(adminPojo);
+	}
+	
+	/**************** Question management ************************/
+	
+	@RequestMapping(value = { "/newquestion" }, method = RequestMethod.GET)
+	public String newQuestion(ModelMap model) {
+		return "newquestion";
+	}
+	
+	@RequestMapping(value = { "/managequestions" }, method = RequestMethod.GET)
+	public String managequestions(ModelMap model) {
 
-		if (result.hasErrors()) {
-			return "write";
+		List<Question> myList = questionService.findAllQuestions();
+		for (Question q : myList) {
+			if (q.getTitletype().equalsIgnoreCase("text")) {
+				q.setTitletype(new String(q.getTitle()));
+			}
 		}
+		model.addAttribute("managequestions", myList);
 
-		/*
-		 * Preferred way to achieve uniqueness of field [user] should be implementing
-		 * custom @Unique annotation and applying it on field [user] of Model class
-		 * [User].
-		 * 
-		 * Below mentioned peace of code [if block] is to demonstrate that you can fill
-		 * custom errors outside the validation framework as well while still using
-		 * internationalized messages.
-		 * 
-		 */
-		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
-			// FieldError userError =new
-			// FieldError("user","userId",messageSource.getMessage("non.unique.userId", new
-			// String[]{user.getUserId()}, Locale.getDefault()));
-			// result.addError(userError);
-			model.addAttribute("user", user);
-			request.getSession().setAttribute("username", user.getUserId());
-			// model.addAttribute("success", "User " + user.getUserId()+ " registered
-			// successfully");
-			return "redirect:writeins";
-		}
-
-		userService.saveUser(user);
-
-		model.addAttribute("user", user);
-		request.getSession().setAttribute("username", user.getUserId());
-		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
-		// return "success";
-		return "redirect:writeins";
+		return "managequestions";
 	}
 
-	/**
-	 * This method will be called on form submission, handling POST request for
-	 * saving user in database. It also validates the user input
-	 */
-	@RequestMapping(value = { "/speak" }, method = RequestMethod.POST)
-	public String saveUserRegistration(@Valid User user, BindingResult result, ModelMap model,
-			HttpServletRequest request) {
-
-		if (result.hasErrors()) {
-			return "speak";
-		}
-
-		/*
-		 * Preferred way to achieve uniqueness of field [user] should be implementing
-		 * custom @Unique annotation and applying it on field [user] of Model class
-		 * [User].
-		 * 
-		 * Below mentioned peace of code [if block] is to demonstrate that you can fill
-		 * custom errors outside the validation framework as well while still using
-		 * internationalized messages.
-		 * 
-		 */
-		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
-			// FieldError userError =new
-			// FieldError("user","userId",messageSource.getMessage("non.unique.userId", new
-			// String[]{user.getUserId()}, Locale.getDefault()));
-			// result.addError(userError);
-			model.addAttribute("user", user);
-			request.getSession().setAttribute("user", "user");
-			// model.addAttribute("success", "User " + user.getUserId()+ " registered
-			// successfully");
-			return "redirect:speakins";
-		}
-
-		userService.saveUser(user);
-
-		model.addAttribute("user", user);
-		request.getSession().setAttribute("user", "user");
-		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
-		// return "success";
-		return "redirect:speakins";
+	@RequestMapping(value = { "/newquestionastext" }, method = RequestMethod.POST)
+	@ResponseBody
+	public String saveQuestionText(@RequestParam("title") String title, @RequestParam("options") List<String> options) {
+		Question que = new Question();
+		que.setOptions(options);
+		que.setTitle(title.getBytes());
+		que.setTitletype("text");
+		questionService.saveQuestion(que);
+		return "success";
 	}
+
+	@RequestMapping(value = { "/newquestionasaudio" }, method = RequestMethod.POST)
+	@ResponseBody
+	public String saveQuestionAudio(@RequestParam("data") MultipartFile data,
+			@RequestParam("options") List<String> options) throws IOException {
+
+		Question que = new Question();
+		que.setOptions(options);
+		que.setTitle(data.getBytes());
+		que.setTitletype("Audio");
+		questionService.saveQuestion(que);
+		return "success";
+	}
+
 
 	@RequestMapping(value = { "/getAllQuestions" }, method = RequestMethod.GET)
 	public String getAllQuestions() {
@@ -486,30 +374,14 @@ public class AppController {
 			Question myQue = questionService.findById(id);
 			System.out.println(myQue.getTitle().length);
 			response.getOutputStream().write(myQue.getTitle());
-			// System.out.println(buffer.length);
-
+	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	@RequestMapping(value = { "/managequestions" }, method = RequestMethod.GET)
-	public String managequestions(ModelMap model) {
-
-		List<Question> myList = questionService.findAllQuestions();
-		for (Question q : myList) {
-			if (q.getTitletype().equalsIgnoreCase("text")) {
-				q.setTitletype(new String(q.getTitle()));
-			}
-		}
-		model.addAttribute("managequestions", myList);
-
-		return "managequestions";
-	}
-
-	/**
-	 * This method will list all existing users.
-	 */
+	
+	/****************** Results *************************/
+	
 	@RequestMapping(value = { "/result" }, method = RequestMethod.GET)
 	public String getResults(ModelMap model) {
 
@@ -517,13 +389,10 @@ public class AppController {
 		model.addAttribute("users", users);
 		return "result";
 	}
-
-	/**
-	 * This method will list all existing users.
-	 */
+	
+	
 	@RequestMapping(value = { "/useranswers/{userId}" }, method = RequestMethod.GET)
-	public String getResults(ModelMap model,@PathVariable String userId) {
-		System.out.println(userId);
+	public String getResults(ModelMap model, @PathVariable String userId) {
 		List<UserAnswers> ans = userAnsService.findAllUserAnswers(userId);
 		for (UserAnswers q : ans) {
 			if (q.getType().equalsIgnoreCase("text")) {
@@ -533,12 +402,140 @@ public class AppController {
 				q.setQtype(new String(q.getQue()));
 			}
 		}
-		
-		System.out.println(ans.size());
 		model.addAttribute("answers", ans);
 		return "useranswers";
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	/**
+	 * This method will list all existing users.
+	 */
+	@RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
+	public String listUsers(ModelMap model) {
+
+		List<User> users = userService.findAllUsers();
+		model.addAttribute("users", users);
+		return "userslist";
+	}
+
+	/**
+	 * This method will provide the medium to add a new user.
+	 */
+	@RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
+	public String newUser(ModelMap model) {
+		User user = new User();
+		model.addAttribute("user", user);
+		model.addAttribute("edit", false);
+		return "registration";
+	}
+
+	
+
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving user in database. It also validates the user input
+	 */
+	@RequestMapping(value = { "/newuser" }, method = RequestMethod.POST)
+	public String saveUser(@Valid User user, BindingResult result, ModelMap model) {
+
+		if (result.hasErrors()) {
+			return "registration";
+		}
+
+		/*
+		 * Preferred way to achieve uniqueness of field [user] should be
+		 * implementing custom @Unique annotation and applying it on field
+		 * [user] of Model class [User].
+		 * 
+		 * Below mentioned peace of code [if block] is to demonstrate that you
+		 * can fill custom errors outside the validation framework as well while
+		 * still using internationalized messages.
+		 * 
+		 */
+		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
+			FieldError userError = new FieldError("user", "userId", messageSource.getMessage("non.unique.userId",
+					new String[] { user.getUserId() }, Locale.getDefault()));
+			result.addError(userError);
+			return "registration";
+		}
+
+		userService.saveUser(user);
+
+		model.addAttribute("user", user);
+		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
+		// return "success";
+		return "registrationsuccess";
+	}
+
+	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
+	@ResponseBody
+	public String saveQuestion() {
+
+		/*
+		 * Preferred way to achieve uniqueness of field [user] should be
+		 * implementing custom @Unique annotation and applying it on field
+		 * [user] of Model class [User].
+		 * 
+		 * Below mentioned peace of code [if block] is to demonstrate that you
+		 * can fill custom errors outside the validation framework as well while
+		 * still using internationalized messages.
+		 * 
+		 */
+		/*
+		 * Question que = new Question(); if (que.getId() != null &&
+		 * questionService.findById(que.getId()) != null) { FieldError userError
+		 * = new FieldError("user", "userId",
+		 * messageSource.getMessage("non.unique.userId", new String[] {
+		 * String.valueOf(que.getId()) }, Locale.getDefault())); //
+		 * result.addError(userError); return "registration"; } que.setTitle(new
+		 * String("This is question").getBytes()); que.setTitletype("text");
+		 * List<String> options = new ArrayList<String>(); options.add("Yes");
+		 * options.add("No");
+		 * 
+		 * que.setOptions(options);
+		 * 
+		 * questionService.saveQuestion(que);
+		 */
+
+		// model.addAttribute("que", que);
+		// model.addAttribute("success", "que " + que.getId() + " registered
+		// successfully");
+		// return "success";
+		List<UserAnswers> ans = userAnsService.findAllUserAnswers("ahundia");
+		System.out.println(ans.size());
+		return new Gson().toJson(ans);
+
+	}
+
+	
+	
+	
+	
+
+	
+
+	/**
+	 * This method will list all existing users.
+	 */
+
+
+	/**
+	 * This method will list all existing users.
+	 */
+	
 	/**
 	 * This method will provide the medium to update an existing user.
 	 */

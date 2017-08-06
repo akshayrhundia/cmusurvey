@@ -62,7 +62,7 @@
 		<input type="hidden" name="user" id="user"
 			class="form-control input-lg" placeholder="Username"
 			value="${username}"/> 
-			<input class="btn btn-default" type="submit" value="Start" />
+			<input class="btn btn-primary btn-block" type="submit" value="Start" />
 		</form>
 
 

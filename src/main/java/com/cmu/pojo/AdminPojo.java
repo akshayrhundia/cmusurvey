@@ -59,5 +59,12 @@ public class AdminPojo {
 	String speakIns;
 	String writeIns;
 	String lastpage;
+	String secondlastpage;
+	public String getSecondlastpage() {
+		return secondlastpage;
+	}
+	public void setSecondlastpage(String secondlastpage) {
+		this.secondlastpage = secondlastpage;
+	}
 
 }

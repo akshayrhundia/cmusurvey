@@ -38,25 +38,31 @@
 <script src="<c:url value='/static/js/editor.js' />"></script>
 
 <script>
+$('#loading').show();
 			$(document).ready(function() {
+				
 				$("#speakfirstPage").Editor();
 				$("#writefirstPage").Editor();
 				$("#speakInsPage").Editor();
 				$("#lastPage").Editor();
 				$("#writeInsPage").Editor();
+				$("#secondlastPage").Editor();
 				var speakfirstpage = document.getElementById("speakfirst");
 				var writefirst = document.getElementById("writefirst");
 				var speakIns = document.getElementById("speakIns");
 				var lastpage = document.getElementById("lastpage");
 				var writeIns = document.getElementById("writeIns");
+				var secondlastPage = document.getElementById("secondlast");
 				
 				$.get("getAdmin", function(data, rstatus) {
+					$('#loading').hide();
 					jdata = JSON.parse(data);
 					speakfirstpage.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.speakfirstpage;
 					writefirst.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.writefirstpage;
 					speakIns.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.speakIns;
 					lastpage.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.lastpage;
 					writeIns.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.writeIns;
+					secondlastPage.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.secondlastpage;
 				});
 				
 				//'<span style="font-weight: bold;">istruction</span>';
@@ -66,75 +72,78 @@
 
 </head>
 <body>
-	<div class="container">
-		<div id="table" class="table-editable">
-			<table class="table">
+<div class="loading" id="loading">Loading&#8230;</div>
+	<div class="generic-container">
+		<div class="panel panel-default">
+			<!-- Default panel contents -->
+			<div class="panel-heading">
+				<span class="lead">New descriptions form </span>
+			</div>
+			<div class="tablecontainer">
+				<table>
 				<tr>
-					<th>Name</th>
-					<th>Option1</th>
-					<th>Option2</th>
-					<th>Option3</th>
-					<th>Save</th>
-				</tr>
-				<tbody id="main-body">
-				
-				</tbody>
-			</table>
-		</div>
-		<div class="container-fluid">
-			<div class="row">
+				<td>
 				<h2 class="demo-text">speakfirstpage</h2>
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12 nopadding" id="speakfirst">
+						<div  style="width:90%;" id="speakfirst">
 							<textarea id="speakfirstPage"></textarea> 
 						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<h2 class="demo-text">Instruction Page(type)</h2>
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12 nopadding" id="speakIns">
-							<textarea id="speakInsPage"></textarea> 
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<h2 class="demo-text">Instruction Page(speak)</h2>
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12 nopadding" id="writeIns">
-							<textarea id="writeInsPage"></textarea> 
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
+		
+			</td>
+			</tr>
+			
+			<tr>
+			<td>
 				<h2 class="demo-text">writefirstpage</h2>
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12 nopadding" id="writefirst">
+						<div style="width:90%;" id="writefirst">
 							<textarea id="writefirstPage"></textarea> 
 						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
+				
+			</td>
+			</tr>
+			
+			
+			<tr>
+			<td>
+			
+				<h2 class="demo-text">Instruction Page(Speak)</h2>
+						<div style="width:90%;" id="speakIns">
+							<textarea id="speakInsPage"></textarea> 
+						</div>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				<h2 class="demo-text">Instruction Page(Write)</h2>
+						<div style="width:90%;" id="writeIns">
+							<textarea id="writeInsPage"></textarea> 
+						</div>
+			</td>
+			</tr>
+			
+			<tr>
+			<td>
+				<h2 class="demo-text">Second Last Page</h2>
+						<div style="width:90%;" id="secondlast">
+							<textarea id="secondlastPage"></textarea> 
+						</div>
+				
+			</td>
+			</tr>
+			<tr>
+			<td>
 				<h2 class="demo-text">Last Page</h2>
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12 nopadding" id="lastpage">
+				
+						<div id="lastpage" style="width:90%;">
 							<textarea id="lastPage"></textarea> 
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<button  onclick="saveMainPage()" class="btn btn-primary">Save All three Pages</button></td>'
+				
+			</td>
+			</tr>
 		
+		</table>
+		<button  onclick="saveMainPage()" class="btn btn-primary">Save All three Pages</button>
+		</div>
+		</div>
 		
 	</div>
 	
@@ -146,7 +155,7 @@ $(function() {
 	
 	var count = 0;
 	var body = "";
-	$.get("survey/getallquestion", function(quests, rstatus) {
+	/*$.get("survey/getallquestion", function(quests, rstatus) {
 		jquests = JSON.parse(quests);
 		//console.log(jquests);
 		jquests.forEach(function(item) {
@@ -181,30 +190,11 @@ $(function() {
 		});
 		document.getElementById("main-body").innerHTML = body;
 
-	});
+	});*/
 
 });
 
-function save(id, op1, op2, op3) {
-	var q = document.getElementById("q" + id).innerText;
-	var option1 = document.getElementById("o" + op1).innerText;
-	var option2 = document.getElementById("o" + op2).innerText;
-	var option3 = document.getElementById("o" + op3).innerText;
-	console.log(option1);
-	console.log(option2);
-	console.log(option3);
-	$.post("saveQuestion",
-		    {
-				code:parseInt(id),
-				quest: q,
-		        sop1: option1,
-		        sop2: option2,
-		        sop3: option3
-		    },
-		    function(data, status){
-		        alert("Data: " + data + "\nStatus: " + status);
-		    });
-}
+
 function getParameterByName(name, url) {
 	if (!url) {
 		url = window.location.href;
@@ -219,29 +209,39 @@ function getParameterByName(name, url) {
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 function saveMainPage(){
-	var mainv = document.getElementById("main");
-	var lastv1 = document.getElementById("last1");
-	var inst1 = document.getElementById("ins1");
-	var lastv2 = document.getElementById("last2");
-	var inst2 = document.getElementById("ins2");
-	mainv = mainv.getElementsByClassName("Editor-editor")[0].innerHTML;
-	lastv1 = lastv1.getElementsByClassName("Editor-editor")[0].innerHTML;
-	inst1 = inst1.getElementsByClassName("Editor-editor")[0].innerHTML;
-	lastv2 = lastv2.getElementsByClassName("Editor-editor")[0].innerHTML;
-	inst2 = inst2.getElementsByClassName("Editor-editor")[0].innerHTML;
+	$('#loading').show();
+	var speakfirstpages = document.getElementById("speakfirst");
+	var writefirstpages = document.getElementById("writefirst");
+	var speakInspage = document.getElementById("speakIns");
+	var lastpages = document.getElementById("lastpage");
+	var writeInspage = document.getElementById("writeIns");
+	var secondlastpages = document.getElementById("secondlast");
+	
+	
+	speakfirstpages = speakfirstpages.getElementsByClassName("Editor-editor")[0].innerHTML;
+	writefirstpages = writefirstpages.getElementsByClassName("Editor-editor")[0].innerHTML;
+	speakInspage = speakInspage.getElementsByClassName("Editor-editor")[0].innerHTML;
+	lastpages = lastpage.getElementsByClassName("Editor-editor")[0].innerHTML;
+	writeInspage = writeInspage.getElementsByClassName("Editor-editor")[0].innerHTML;
+	secondlastpages = secondlastpages.getElementsByClassName("Editor-editor")[0].innerHTML;
 	//console.log(mainv);
-	console.log(lastv1);
-	console.log(lastv2);
-	$.post("survey/addAdmin",
+	//console.log(lastv1);
+	//console.log(lastv2);
+	
+	$.post("addAdmin",
 		    {
-				ins1: inst1,
-				last1: lastv1,
-				ins2: inst2,
-				last2: lastv2,
-		        main: mainv
+		
+		 speakfirstpage:speakfirstpages,
+		 writefirstpage:writefirstpages,
+		 speakIns:speakInspage,
+		 writeIns:writeInspage,
+		 lastpage:lastpages,
+		 secondlastpage:secondlastpages
 		    },
 		    function(data, status){
-		        alert("Data: " + data + "\nStatus: " + status);
+		        //alert("Data: " + data + "\nStatus: " + status);
+		        $('#loading').hide();
+		        location.reload();
 		    });
 }
 

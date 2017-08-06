@@ -16,10 +16,10 @@
 		<div class="panel panel-default">
 			  <!-- Default panel contents -->
 		  	<div class="tablecontainer">
-				 <c:out value="${secondlastpage}" escapeXml="false"/>
+				 <c:out value="${lastpage}" escapeXml="false"/>
 		    </div>
 		</div>
-		<a href="../last" class="btn btn-primary btn-block" >Next</a>
+	
 		
    	</div>
 </body>

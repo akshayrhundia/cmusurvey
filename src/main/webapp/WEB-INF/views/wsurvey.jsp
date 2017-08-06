@@ -47,7 +47,7 @@
 				<div class="modal-content">
 					<div class="modal-header" style="height: 100px;">
 						<h3>
-							<span id="qid">${question.titletype}
+							<span id="qid">
 							
 							<c:choose>
 								<c:when test = "${question.titletype == 'Audio'}">

@@ -101,6 +101,19 @@ public class Admin {
 	@Column(name = "writeIns", nullable = false)
 	private byte[] writeIns;
 
+	
+	@Lob
+	@Basic(fetch = FetchType.EAGER)
+	@Column(name = "secondlastpage", nullable = false)
+	private byte[] secondlastpage;
+	
+	public byte[] getSecondlastpage() {
+		return secondlastpage;
+	}
+	public void setSecondlastpage(byte[] secondlastpage) {
+		this.secondlastpage = secondlastpage;
+	}
+
 	@Lob
 	@Basic(fetch = FetchType.EAGER)
 	@Column(name = "lastpage", nullable = false)
