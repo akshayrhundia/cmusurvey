@@ -26,16 +26,13 @@ public class User {
 	@Column(name="user_ID", unique=true, nullable=false)
 	private String userId;
 	
-	@NotNull
-	@Column(name="age", nullable=false)
+	@Column(name="age")
 	private Integer age;
 
-	@NotEmpty
-	@Column(name="gender", nullable=false)
+	@Column(name="gender")
 	private String gender;
 
-	@NotEmpty
-	@Column(name="occupation", nullable=false)
+	@Column(name="occupation")
 	private String occupation;
 
 	public Integer getId() {

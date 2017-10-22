@@ -7,12 +7,13 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Survey</title>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"
 	integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
 	crossorigin="anonymous"></script>
-
+	
+	
 
 
 <!--
@@ -31,7 +32,6 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<script src="<c:url value='/static/js/writesurvey.js' />"></script>
 
 <link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
 <link href="" rel="stylesheet"></link>
@@ -40,7 +40,7 @@
 </head>
 <body>
 
-	<div class="container-fluid bg-info">
+	<div class="container-fluid">
 		<div id="main-body">
 
 			<div class="modal-dialog">
@@ -51,7 +51,7 @@
 							
 							<c:choose>
 								<c:when test = "${question.titletype == 'Audio'}">
-									<audio controls><source src="../getQuestionFile/${question.id}" type="audio/wav" />
+									<audio controls autoplay class="audio"><source src="../getQuestionFile/${question.id}" type="audio/wav" /></audio>
       							</c:when>
       							<c:when test = "${question.titletype == 'Video'}">
       							</c:when>

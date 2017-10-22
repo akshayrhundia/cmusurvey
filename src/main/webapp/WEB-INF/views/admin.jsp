@@ -8,9 +8,10 @@
 
 <html lang="en">
 <head>
-<title>Maven + Spring MVC + @JavaConfig</title>
+<title>Admin page for survey</title>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
@@ -23,7 +24,8 @@
 <!-- Latest compiled and minified JavaScript -->
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
 
 
@@ -72,7 +74,39 @@ $('#loading').show();
 
 </head>
 <body>
-<div class="loading" id="loading">Loading&#8230;</div>
+	<!-- Second navbar for profile settings -->
+	<nav class="navbar navbar-inverse">
+	<div class="container">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#navbar-collapse-4">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">CMU Survey</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="navbar-collapse-4">
+			<ul class="nav navbar-nav navbar-right">
+				<li class="active"><a href="admin">Home</a></li>
+				<li><a href="newquestion">Add Question</a></li>
+				
+				<li><a href="managequestions">Manage Questions</a></li>
+				<li><a href="result">Results</a></li>
+			
+			</ul>
+		</div>
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container --> </nav>
+	<!-- /.navbar -->
+	</div>
+	<!-- /.container-fluid -->
+	<div class="container">
+	<div class="loading" id="loading">Loading&#8230;</div>
 	<div class="generic-container">
 		<div class="panel panel-default">
 			<!-- Default panel contents -->
@@ -81,73 +115,74 @@ $('#loading').show();
 			</div>
 			<div class="tablecontainer">
 				<table>
-				<tr>
-				<td>
-				<h2 class="demo-text">speakfirstpage</h2>
-						<div  style="width:90%;" id="speakfirst">
-							<textarea id="speakfirstPage"></textarea> 
-						</div>
-		
-			</td>
-			</tr>
-			
-			<tr>
-			<td>
-				<h2 class="demo-text">writefirstpage</h2>
-						<div style="width:90%;" id="writefirst">
-							<textarea id="writefirstPage"></textarea> 
-						</div>
-				
-			</td>
-			</tr>
-			
-			
-			<tr>
-			<td>
-			
-				<h2 class="demo-text">Instruction Page(Speak)</h2>
-						<div style="width:90%;" id="speakIns">
-							<textarea id="speakInsPage"></textarea> 
-						</div>
-			</td>
-			</tr>
-			<tr>
-			<td>
-				<h2 class="demo-text">Instruction Page(Write)</h2>
-						<div style="width:90%;" id="writeIns">
-							<textarea id="writeInsPage"></textarea> 
-						</div>
-			</td>
-			</tr>
-			
-			<tr>
-			<td>
-				<h2 class="demo-text">Second Last Page</h2>
-						<div style="width:90%;" id="secondlast">
-							<textarea id="secondlastPage"></textarea> 
-						</div>
-				
-			</td>
-			</tr>
-			<tr>
-			<td>
-				<h2 class="demo-text">Last Page</h2>
-				
-						<div id="lastpage" style="width:90%;">
-							<textarea id="lastPage"></textarea> 
-						</div>
-				
-			</td>
-			</tr>
-		
-		</table>
-		<button  onclick="saveMainPage()" class="btn btn-primary">Save All three Pages</button>
+					<tr>
+						<td>
+							<h2 class="demo-text">speakfirstpage</h2>
+							<div style="width: 90%;" id="speakfirst">
+								<textarea id="speakfirstPage"></textarea>
+							</div>
+
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<h2 class="demo-text">writefirstpage</h2>
+							<div style="width: 90%;" id="writefirst">
+								<textarea id="writefirstPage"></textarea>
+							</div>
+
+						</td>
+					</tr>
+
+
+					<tr>
+						<td>
+
+							<h2 class="demo-text">Instruction Page(Speak)</h2>
+							<div style="width: 90%;" id="speakIns">
+								<textarea id="speakInsPage"></textarea>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h2 class="demo-text">Instruction Page(Write)</h2>
+							<div style="width: 90%;" id="writeIns">
+								<textarea id="writeInsPage"></textarea>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<h2 class="demo-text">Second Last Page</h2>
+							<div style="width: 90%;" id="secondlast">
+								<textarea id="secondlastPage"></textarea>
+							</div>
+
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h2 class="demo-text">Last Page</h2>
+
+							<div id="lastpage" style="width: 90%;">
+								<textarea id="lastPage"></textarea>
+							</div>
+
+						</td>
+					</tr>
+
+				</table>
+				<button onclick="saveMainPage()" class="btn btn-primary">Save
+					All three Pages</button>
+			</div>
 		</div>
-		</div>
-		
+
 	</div>
-	
-<script>
+	</div>
+	<script>
 
 $(function() {
 

@@ -2,6 +2,7 @@ $(function() {
 
 	
 	
+	
 	var path = document.location.pathname
 	var res = path.split("/");
 	// alert(res[res.length - 1]);
@@ -16,7 +17,7 @@ $(function() {
 	if(user!=null){
 	$
 	.get(
-			"register/" + user.toUpperCase()+"?age="+age+"&gender="+gender+"&occupation="+occupation,
+			"../register/" + user.toUpperCase()+"?age="+age+"&gender="+gender+"&occupation="+occupation,
 			function(registered, rstatus) {
 			//	alert(registered);
 	

@@ -7,7 +7,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Survey</title>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"
 	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -88,7 +88,7 @@ background:url('../images/pause.png') no-repeat
 
 </head>
 <body>
-
+<div class="container">
 	<div class="container-fluid bg-info">
 		<div id="main-body">
 
@@ -100,7 +100,9 @@ background:url('../images/pause.png') no-repeat
 							
 							<c:choose>
 								<c:when test = "${question.titletype == 'Audio'}">
-									<audio controls><source src="../getQuestionFile/${question.id}" type="audio/wav" />
+									<article>
+									<audio class="audio" controls="controls"><source src="../getQuestionFile/${question.id}" type="audio/wav" />
+									</article>
       							</c:when>
       							<c:when test = "${question.titletype == 'Video'}">
       							</c:when>
@@ -159,7 +161,9 @@ background:url('../images/pause.png') no-repeat
 					</form:form>
 				</div>
 
-
+</div>
+</div>
+</div>
 
 			</div>
 </body>

@@ -135,7 +135,7 @@ public class AppController {
 	public String saveWriteSurvey(@Valid User user, BindingResult result, ModelMap model, HttpServletRequest request) {
 
 		if (result.hasErrors()) {
-			return "write";
+			return "redirect:write";
 		}
 
 		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
@@ -171,7 +171,7 @@ public class AppController {
 	
 	@RequestMapping(value = { "/writesurvey/{qId}" }, method = RequestMethod.GET)
 	public String getWritesurvey(@PathVariable("qId") int qId, ModelMap model) {
-
+		try{
 		Question que = questionService.findById(qId);
 		if (que != null) {
 			if (que.getTitletype().equalsIgnoreCase("text")) {
@@ -185,6 +185,9 @@ public class AppController {
 			Admin temp = admins.get(admins.size() - 1);
 			model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
 			return "over";
+		}}
+		catch(Exception ex){
+			return "redirect:write";
 		}
 	}
 	@RequestMapping(value = { "/speaksurvey/{qId}" }, method = RequestMethod.GET)
@@ -209,6 +212,7 @@ public class AppController {
 	@RequestMapping(value = { "/savewriteans" }, method = RequestMethod.POST)
 	public String saveAnswerText(HttpServletRequest request, @RequestParam("reply") String reply,
 			@RequestParam("qId") Integer qId) {
+		try{
 		Question que = questionService.findById(qId);
 		if (que != null) {
 			UserAnswers ans = new UserAnswers();
@@ -227,6 +231,10 @@ public class AppController {
 			return "redirect:writesurvey/" + (qId + 1);
 		} else {
 			return "redirect:writesurvey/" + (qId);
+		}
+		}
+		catch(Exception ex){
+			return "redirect:write";
 		}
 	}
 	
@@ -290,15 +298,18 @@ public class AppController {
 	@ResponseBody
 	public String getAdmin() {
 		List<Admin> admins = adminService.findAllAdmins();
-		Admin temp = admins.get(admins.size() - 1);
 		AdminPojo adminPojo = new AdminPojo();
-		adminPojo.setLastpage(new String(temp.getLastpage()));
-		adminPojo.setSpeakfirstpage(new String(temp.getSpeakfirstpage()));
-		adminPojo.setSpeakIns(new String(temp.getSpeakIns()));
-		adminPojo.setWritefirstpage(new String(temp.getWritefirstpage()));
-		adminPojo.setWriteIns(new String(temp.getWriteIns()));
-		adminPojo.setSecondlastpage(new String(temp.getSecondlastpage()));
+		if (admins != null && admins.size() > 0) {
+			Admin temp = admins.get(admins.size() - 1);
+			adminPojo.setLastpage(new String(temp.getLastpage()));
+			adminPojo.setSpeakfirstpage(new String(temp.getSpeakfirstpage()));
+			adminPojo.setSpeakIns(new String(temp.getSpeakIns()));
+			adminPojo.setWritefirstpage(new String(temp.getWritefirstpage()));
+			adminPojo.setWriteIns(new String(temp.getWriteIns()));
+			adminPojo.setSecondlastpage(new String(temp.getSecondlastpage()));
+		}
 		return new Gson().toJson(adminPojo);
+
 	}
 	
 	/**************** Question management ************************/
