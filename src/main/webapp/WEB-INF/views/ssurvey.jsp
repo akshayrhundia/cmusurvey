@@ -31,55 +31,12 @@
 	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 	crossorigin="anonymous"></script>
 
-<script src="<c:url value='/static/js/writesurvey.js' />"></script>
+<!-- <script src="<c:url value='/static/js/writesurvey.js' />"></script> -->
 
 <link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
 <link href="" rel="stylesheet"></link>
 
-<style type='text/css'>
-ul {
-	list-style: none;
-}
 
-#recordingslist audio {
-	display: block;
-	margin-bottom: 10px;
-}
-
-audio{display:none}
-.audioContainer
-{
-height:50px;width:250px;
-border:solid 1px #dedede;
-position:relative;
-}
-.audioProgress
-{
-height:50px;float:left;background-color:#f2f2f2;z-index:800
-}
-.audioControl
-{
-position: absolute;float:left;width:52px;height:48px;;
-}
-.audioTime
-{
-position: absolute;width: 45px;height: 20px;margin-left:199px;float:right;
-}
-.audioBar
-{
-height: 3px;
-background-color: #cc0000;
-position: absolute;width: 147px;margin-left: 53px;
-}
-.audioPlay
-{
-background:url('../images/play.png') no-repeat
-} 
-.audioPause
-{
-background:url('../images/pause.png') no-repeat
-}
-</style>
 
 <script src="<c:url value='/static/dist/recorder.js' />"></script>
 
@@ -88,22 +45,20 @@ background:url('../images/pause.png') no-repeat
 
 </head>
 <body>
-<div class="container">
-	<div class="container-fluid bg-info">
+<div class="loading" id="loading">Loading&#8230;</div>
+<div class="container-fluid">
 		<div id="main-body">
 
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header" style="height: 100px;">
 						<h3>
-							<span id="qid">${question.titletype}
+							<span id="qid">
 							
 							<c:choose>
 								<c:when test = "${question.titletype == 'Audio'}">
-									<article>
-									<audio class="audio" controls="controls"><source src="../getQuestionFile/${question.id}" type="audio/wav" />
-									</article>
-      							</c:when>
+									<audio controls autoplay class="audio" ><source src="../getQuestionFile/${question.id}" type="audio/wav" /></audio>
+								</c:when>
       							<c:when test = "${question.titletype == 'Video'}">
       							</c:when>
       							<c:otherwise>
@@ -135,7 +90,7 @@ background:url('../images/pause.png') no-repeat
 						</c:forEach>
 						</div>
 					</div>
-					<form:form method="POST"  action="../savespeakans" class="form-horizontal">
+					<!--<form:form method="POST"  action="../savespeakans" enctype="multipart/form-data" class="form-horizontal">-->
 					<div class="panel panel-default">
 						<div class="panel-heading clearfix">
 							<i class="icon-calendar"></i>
@@ -148,7 +103,7 @@ background:url('../images/pause.png') no-repeat
 															
 								<button onclick="startRecording(this);">Record Answer</button>
 								<button onclick="stopRecording(this);" disabled>stop</button>
-	  							<button  onclick="reset(this);" disabled>reset</button>
+	  							<button  onclick="reset(this);">reset</button>
 	  							<h4>Recorded Answer</h4>
 	  							<ul id="recordingslist"></ul>
 									
@@ -156,20 +111,24 @@ background:url('../images/pause.png') no-repeat
 						</div>
 					</div>
 					<div class="modal-footer text-muted">
-						<input type="submit" value="Next" class="btn btn-default" />
+						<input type="submit" value="Next" class="btn btn-default" onclick="saveMyAudio()" />
 					</div>
-					</form:form>
+					<!--</form:form>-->
 				</div>
 
 </div>
 </div>
 </div>
 
-			</div>
+		
 </body>
 
 <script>
 
+$(document).ready(function(){
+	$('#loading').hide();
+	});
+	
 
 var gBlob=null;
  
@@ -185,6 +144,11 @@ var gBlob=null;
     
     recorder = new Recorder(input);
   }
+  function reset(button) {
+	  while (recordingslist.hasChildNodes()) {
+    	  recordingslist.removeChild(recordingslist.lastChild);
+    	}
+	  }
 
   function startRecording(button) {
     recorder && recorder.record();
@@ -207,7 +171,7 @@ var gBlob=null;
     recorder && recorder.exportWAV(function(blob) {
     	gBlob=blob;
       var url = URL.createObjectURL(blob);
-      var li = document.createElement('li');
+      //var li = document.createElement('li');
       var au = document.createElement('audio');
       var hf = document.createElement('a');
       
@@ -218,9 +182,13 @@ var gBlob=null;
       hf.href = url;
       hf.download = new Date().toISOString() + '.wav';
       hf.innerHTML = hf.download;
-      li.appendChild(au);
-      li.appendChild(hf);
-      recordingslist.appendChild(li);
+      //li.appendChild(au);
+      //li.appendChild(hf);
+      while (recordingslist.hasChildNodes()) {
+    	  recordingslist.removeChild(recordingslist.lastChild);
+    	}
+      recordingslist.appendChild(au);
+      //recordingslist.appendChild(hf);
     });
   }
 
@@ -239,5 +207,37 @@ var gBlob=null;
     navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
     });
   };
+  
+  function saveMyAudio(){
+	  if (!recordingslist.hasChildNodes()) {
+		  alert("Please record your answer");
+		  return;
+	  }
+	  $('#loading').show();
+	  var url = URL.createObjectURL(gBlob);
+      var fd = new FormData();
+      
+      var qId = document.getElementById('qId');
+	  //var titleByte=toUTF8Array(title.value);
+	  var opts=[];
+	  opts.push(qId.value);
+	     
+	  fd.append('qId', qId.value);
+	  fd.append('reply', gBlob);
+      $.ajax({
+          type: 'POST',
+          url: '../savespeakans',
+          data: fd,
+          contentType: false,
+          processData: false
+      }).done(function(data) {
+    	  //alert(data);
+    	  window.location.replace(data);
+    	  //alert("done");
+      }).fail(function() { alert("error"); 
+      $('#loading').hide();});
+     
+   
+}
   </script>
 </html>

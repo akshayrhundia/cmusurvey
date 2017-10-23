@@ -95,7 +95,7 @@
       						
       						<c:choose>
 								<c:when test = "${ans.type == 'Audio'}">
-									<td><audio controls><source src="/ans" type="audio/wav" /></td>
+									<td><audio controls><source src="../getAnswerFile/${ans.qId}?userId=${ans.userId}" type="audio/wav" /></audio></td>
       							</c:when>
       							<c:when test = "${ans.type == 'Video'}">
       								<td>

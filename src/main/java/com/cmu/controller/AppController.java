@@ -238,6 +238,7 @@ public class AppController {
 		}
 	}
 	
+	@ResponseBody
 	@RequestMapping(value = { "/savespeakans" }, method = RequestMethod.POST)
 	public String saveAnswerAudio(HttpServletRequest request, @RequestParam("reply") MultipartFile reply,
 			@RequestParam("qId") Integer qId) throws IOException {
@@ -246,7 +247,7 @@ public class AppController {
 			UserAnswers ans = new UserAnswers();
 			ans.setqId(qId);
 			ans.setReply(reply.getBytes());
-			ans.setType("text");
+			ans.setType("Audio");
 			ans.setQtype(que.getTitletype());
 			ans.setUserId((String) request.getSession().getAttribute("username"));
 			ans.setQue(que.getTitle());
@@ -256,9 +257,9 @@ public class AppController {
 			} else {
 				userAnsService.saveUserAnswer(ans);
 			}
-			return "redirect:speaksurvey/" + (qId + 1);
+			return "../speaksurvey/" + (qId + 1);
 		} else {
-			return "redirect:speaksurvey/" + (qId);
+			return "../speaksurvey/" + (qId);
 		}
 	}
 	
@@ -383,7 +384,7 @@ public class AppController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + "que.wav" + "\"");
 		try {
 			Question myQue = questionService.findById(id);
-			System.out.println(myQue.getTitle().length);
+			//System.out.println(myQue.getTitle().length);
 			response.getOutputStream().write(myQue.getTitle());
 	
 		} catch (IOException e) {
@@ -417,6 +418,22 @@ public class AppController {
 		return "useranswers";
 	}
 
+	@RequestMapping(value = "/getAnswerFile/{qId}")
+	public void getAnswerFile(@PathVariable("qId") int id,@RequestParam String userId, ModelMap model, HttpServletResponse response)
+			throws IOException, ServletException {
+
+		response.setContentType("audio/vnd.wave");
+
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + "que.wav" + "\"");
+		try {
+			UserAnswers myAns = userAnsService.findUserAnswerByQuestionId(id, userId);
+			//System.out.println(myQue.getTitle().length);
+			response.getOutputStream().write(myAns.getReply());
+	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	
