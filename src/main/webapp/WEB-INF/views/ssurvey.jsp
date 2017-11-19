@@ -56,13 +56,11 @@
 							<span id="qid">
 							
 							<c:choose>
-								<c:when test = "${question.titletype == 'Audio'}">
-									<audio controls autoplay class="audio" ><source src="../getQuestionFile/${question.id}" type="audio/wav" /></audio>
+								<c:when test = "${titletype == 'audio'}">
+									<audio controls autoplay class="audio" ><source src="../../getQuestionFile/${question.id}" type="audio/wav" /></audio>
 								</c:when>
-      							<c:when test = "${question.titletype == 'Video'}">
-      							</c:when>
       							<c:otherwise>
-      								${question.titletype}
+      								${question.title}
     							</c:otherwise>
       						</c:choose>
       						</span>

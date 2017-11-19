@@ -7,15 +7,15 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import com.cmu.model.Question;
+import com.cmu.model.QuestionText;
 
 
 
-@Repository("questionDao")
-public class QuestionDaoImpl extends AbstractDao<Integer, Question> implements QuestionDao {
+@Repository("questionTextDao")
+public class QuestionTextDaoImpl extends AbstractDao<Integer, QuestionText> implements QuestionTextDao {
 
-	public Question findById(int id) {
-		Question Question = getByKey(id);
+	public QuestionText findById(int id) {
+		QuestionText Question = getByKey(id);
 		return Question;
 	}
 
@@ -28,15 +28,15 @@ public class QuestionDaoImpl extends AbstractDao<Integer, Question> implements Q
 	}*/
 
 	@SuppressWarnings("unchecked")
-	public List<Question> findAllQuestions() {
+	public List<QuestionText> findAllQuestions() {
 		Criteria criteria = createEntityCriteria().addOrder(Order.asc("title"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<Question> Questions = (List<Question>) criteria.list();
+		List<QuestionText> Questions = (List<QuestionText>) criteria.list();
 		
 		return Questions;
 	}
 
-	public void save(Question Question) {
+	public void save(QuestionText Question) {
 		persist(Question);
 	}
 

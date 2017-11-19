@@ -2,23 +2,35 @@ package com.cmu.service;
 
 import java.util.List;
 
-import com.cmu.model.Question;
+import com.cmu.model.QuestionAudio;
+import com.cmu.model.QuestionText;
 
 
 public interface QuestionService {
 	
-	Question findById(int id);
+	QuestionText findTextById(int id);
 	
 	//Question findBySSO(String sso);
 	
-	void saveQuestion(Question Question);
+	void saveTextQuestion(QuestionText Question);
 	
-	void updateQuestion(Question Question);
+	void updateTextQuestion(QuestionText Question);
 	
 	//void deleteQuestionBySSO(String sso);
 
-	List<Question> findAllQuestions(); 
+	List<QuestionText> findAllTextQuestions(); 
 	
 	//boolean isQuestionSSOUnique(Integer id, String sso);
 
+	QuestionAudio findAudioById(String id);
+	
+	//Question findBySSO(String sso);
+	
+	void saveAudioQuestion(QuestionAudio Question);
+	
+	void updateAudioQuestion(QuestionAudio Question);
+	
+	//void deleteQuestionBySSO(String sso);
+
+	List<QuestionAudio> findAllAudioQuestions(); 
 }

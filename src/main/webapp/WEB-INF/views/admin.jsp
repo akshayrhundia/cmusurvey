@@ -94,8 +94,11 @@ $('#loading').show();
 				<li class="active"><a href="admin">Home</a></li>
 				<li><a href="newquestion">Add Question</a></li>
 				
-				<li><a href="managequestions">Manage Questions</a></li>
-				<li><a href="result">Results</a></li>
+				<li><a href="managetextquestions">Manage
+							Text Questions</a></li>
+				<li><a href="manageaudioquestions">Manage Audio Questions</a></li>
+				<li><a href="textresult">Text Results</a></li>
+				<li><a href="audioresult">Audio Results</a></li>
 			
 			</ul>
 		</div>

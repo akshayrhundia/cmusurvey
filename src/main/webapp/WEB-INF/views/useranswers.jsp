@@ -47,11 +47,22 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="navbar-collapse-4">
 			<ul class="nav navbar-nav navbar-right">
-				<li ><a href="admin">Home</a></li>
-				<li><a href="newquestion">Add Question</a></li>
-				
-				<li><a href="managequestions">Manage Questions</a></li>
-				<li class="active"><a href="../result">Results</a></li>
+				<li ><a href="../../admin">Home</a></li>
+				<li><a href="../../newquestion">Add Question</a></li>
+				<li><a href="../../managetextquestions">Manage
+							Text Questions</a></li>
+				<li><a href="../../manageaudioquestions">Manage Audio Questions</a></li>
+				<c:choose>
+								<c:when test = "${type == 'text'}">
+									<li class="active"><a href="../result">Text Results</a></li>
+      								<li ><a href="../../audio/result">Audio Results</a></li>
+      							</c:when>
+      							
+      							<c:otherwise>
+      								<li><a href="../../text/result">Text Results</a></li>
+      								<li class="active"><a href="../result">Audio Results</a></li>
+    							</c:otherwise>
+      						</c:choose>
 			
 			</ul>
 		</div>
@@ -81,12 +92,8 @@
 							<td>${ans.qId}</td>
 							<td>${ans.userId}</td>
 							<c:choose>
-								<c:when test = "${ans.qtype == 'Audio'}">
-									<td><audio controls><source src="../getQuestionFile/${ans.qId}" type="audio/wav" /></td>
-      							</c:when>
-      							<c:when test = "${ans.qtype == 'Video'}">
-      								<td>
-      								</td>
+								<c:when test = "${type == 'audio'}">
+									<td><audio controls><source src="../../getQuestionFile/AUDIO_${ans.qId}" type="audio/wav" /></td>
       							</c:when>
       							<c:otherwise>
       								<td>${ans.qtype}</td>
@@ -95,11 +102,7 @@
       						
       						<c:choose>
 								<c:when test = "${ans.type == 'Audio'}">
-									<td><audio controls><source src="../getAnswerFile/${ans.qId}?userId=${ans.userId}" type="audio/wav" /></audio></td>
-      							</c:when>
-      							<c:when test = "${ans.type == 'Video'}">
-      								<td>
-      								</td>
+									<td><audio controls><source src="../../getAnswerFile/${ans.qId}?userId=${ans.userId}" type="audio/wav" /></audio></td>
       							</c:when>
       							<c:otherwise>
       								<td>${ans.type}</td>

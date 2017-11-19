@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,7 +40,8 @@ import org.w3c.dom.Document;
 
 import com.cmu.model.Admin;
 import com.cmu.model.FileBucket;
-import com.cmu.model.Question;
+import com.cmu.model.QuestionAudio;
+import com.cmu.model.QuestionText;
 import com.cmu.model.User;
 import com.cmu.model.UserAnswers;
 import com.cmu.model.UserDocument;
@@ -83,8 +85,8 @@ public class AppController {
 		binder.setValidator(fileValidator);
 	}
 
-	@RequestMapping(value = { "/speak" }, method = RequestMethod.GET)
-	public String getAllAdmin(ModelMap model) {
+	@RequestMapping(value = { "/{type}/speak" }, method = RequestMethod.GET)
+	public String getAllAdmin(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
 		model.addAttribute("speakfirstpage", new String(myList.get(myList.size() - 1).getSpeakfirstpage()));
 		User user = new User();
@@ -92,8 +94,8 @@ public class AppController {
 		return "firstpage";
 	}
 
-	@RequestMapping(value = { "/write" }, method = RequestMethod.GET)
-	public String getFirstWritePage(ModelMap model) {
+	@RequestMapping(value = { "/{type}/write" }, method = RequestMethod.GET)
+	public String getFirstWritePage(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
 		model.addAttribute("writefirstpage", new String(myList.get(myList.size() - 1).getWritefirstpage()));
 		User user = new User();
@@ -105,9 +107,9 @@ public class AppController {
 	 * This method will be called on form submission, handling POST request for
 	 * saving user in database. It also validates the user input
 	 */
-	@RequestMapping(value = { "/speak" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/{type}/speak" }, method = RequestMethod.POST)
 	public String saveUserRegistration(@Valid User user, BindingResult result, ModelMap model,
-			HttpServletRequest request) {
+			HttpServletRequest request,@PathVariable("type")  String type) {
 
 		if (result.hasErrors()) {
 			return "speak";
@@ -131,8 +133,8 @@ public class AppController {
 	 * This method will be called on form submission, handling POST request for
 	 * saving user in database. It also validates the user input
 	 */
-	@RequestMapping(value = { "/write" }, method = RequestMethod.POST)
-	public String saveWriteSurvey(@Valid User user, BindingResult result, ModelMap model, HttpServletRequest request) {
+	@RequestMapping(value = { "{type}/write" }, method = RequestMethod.POST)
+	public String saveWriteSurvey(@Valid User user, BindingResult result, ModelMap model, HttpServletRequest request,@PathVariable("type")  String type) {
 
 		if (result.hasErrors()) {
 			return "redirect:write";
@@ -151,55 +153,77 @@ public class AppController {
 		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
 		return "redirect:writeins";
 	}
-	@RequestMapping(value = { "/speakins" }, method = RequestMethod.GET)
-	public String getSpeakInstructions(ModelMap model) {
+	@RequestMapping(value = { "/{type}/speakins" }, method = RequestMethod.GET)
+	public String getSpeakInstructions(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
-		model.addAttribute("qId", "1");
+		if(type.equalsIgnoreCase("audio"))
+			model.addAttribute("qId", "AUDIO_0");
+		if(type.equalsIgnoreCase("text"))
+			model.addAttribute("qId", "1");
 		model.addAttribute("survey", "speaksurvey");
 		model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
 		return "instructions";
 	}
 
-	@RequestMapping(value = { "/writeins" }, method = RequestMethod.GET)
-	public String getWriteInstructions(ModelMap model) {
+	@RequestMapping(value = { "{type}/writeins" }, method = RequestMethod.GET)
+	public String getWriteInstructions(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
-		model.addAttribute("qId", "1");
+		if(type.equalsIgnoreCase("audio"))
+			model.addAttribute("qId", "AUDIO_0");
+		if(type.equalsIgnoreCase("text"))
+			model.addAttribute("qId", "1");
 		model.addAttribute("survey", "writesurvey");
 		model.addAttribute("writeIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
 		return "instructions";
 	}
 	
-	@RequestMapping(value = { "/writesurvey/{qId}" }, method = RequestMethod.GET)
-	public String getWritesurvey(@PathVariable("qId") int qId, ModelMap model) {
-		try{
-		Question que = questionService.findById(qId);
-		if (que != null) {
-			if (que.getTitletype().equalsIgnoreCase("text")) {
-				que.setTitletype(new String(que.getTitle()));
+	@RequestMapping(value = { "{type}/writesurvey/{qId}" }, method = RequestMethod.GET)
+	public String getWritesurvey(@PathVariable("qId") String qId, ModelMap model, @PathVariable("type")  String type) {
+		model.addAttribute("titletype", type);
+		if (type.equalsIgnoreCase("text")) {
+			try {
+				QuestionText que = questionService.findTextById(Integer.parseInt(qId));
+				if (que != null) {
+					model.addAttribute("question", que);
+					model.addAttribute("qId", que.getId() + 1);
+					return "wsurvey";
+				} else {
+					List<Admin> admins = adminService.findAllAdmins();
+					Admin temp = admins.get(admins.size() - 1);
+					model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
+					return "over";
+				}
+			} catch (Exception ex) {
+				return "redirect:write";
 			}
-			model.addAttribute("question", que);
-			model.addAttribute("qId", que.getId() + 1);
-			return "wsurvey";
 		} else {
-			List<Admin> admins = adminService.findAllAdmins();
-			Admin temp = admins.get(admins.size() - 1);
-			model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
-			return "over";
-		}}
-		catch(Exception ex){
-			return "redirect:write";
+			try {
+				QuestionAudio que = questionService.findAudioById(qId);
+				if (que != null) {
+					model.addAttribute("question", que);
+					model.addAttribute("qId", que.getId() + 1);
+					return "wsurvey";
+				} else {
+					List<Admin> admins = adminService.findAllAdmins();
+					Admin temp = admins.get(admins.size() - 1);
+					model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
+					return "over";
+				}
+			} catch (Exception ex) {
+				return "redirect:write";
+			}
 		}
 	}
-	@RequestMapping(value = { "/speaksurvey/{qId}" }, method = RequestMethod.GET)
-	public String getSpeakSurvey(@PathVariable("qId") int qId, ModelMap model) {
-
-		Question que = questionService.findById(qId);
+	@RequestMapping(value = { "/{type}/speaksurvey/{qId}" }, method = RequestMethod.GET)
+	public String getSpeakSurvey(@PathVariable("qId") String qId, ModelMap model,@PathVariable("type")  String type) {
+		if (type.equalsIgnoreCase("text")) {
+			//String[] sp=qId.split("_");
+			
+		QuestionText que = questionService.findTextById(Integer.parseInt(qId));
 		if (que != null) {
-			if (que.getTitletype().equalsIgnoreCase("text")) {
-				que.setTitletype(new String(que.getTitle()));
-			}
 			model.addAttribute("question", que);
 			model.addAttribute("qId", que.getId() + 1);
+			model.addAttribute("titletype", type);
 			return "ssurvey";
 		} else {
 			List<Admin> admins = adminService.findAllAdmins();
@@ -207,64 +231,131 @@ public class AppController {
 			model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
 			return "over";
 		}
+		}else{
+			QuestionAudio que = questionService.findAudioById(qId);
+			if (que != null) {
+				model.addAttribute("question", que);
+				String[] sp=qId.split("_");
+				model.addAttribute("qId", Integer.parseInt(sp[1]) + 1);
+				model.addAttribute("titletype", type);
+				return "ssurvey";
+			} else {
+				List<Admin> admins = adminService.findAllAdmins();
+				Admin temp = admins.get(admins.size() - 1);
+				model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
+				return "over";
+			}
+		}
 	}
 	
-	@RequestMapping(value = { "/savewriteans" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/{type}/savewriteans" }, method = RequestMethod.POST)
 	public String saveAnswerText(HttpServletRequest request, @RequestParam("reply") String reply,
-			@RequestParam("qId") Integer qId) {
-		try{
-		Question que = questionService.findById(qId);
-		if (que != null) {
-			UserAnswers ans = new UserAnswers();
-			ans.setqId(qId);
-			ans.setReply(reply.getBytes());
-			ans.setType("text");
-			ans.setQtype(que.getTitletype());
-			ans.setUserId((String) request.getSession().getAttribute("username"));
-			ans.setQue(que.getTitle());
-			if (userAnsService.findUserAnswerByQuestionId(qId,
-					(String) request.getSession().getAttribute("username")) != null) {
-				userAnsService.updateUserAnswer(ans);
-			} else {
-				userAnsService.saveUserAnswer(ans);
+			@RequestParam("qId") String qId, @PathVariable("type") String qType) {
+
+		if (qType.equalsIgnoreCase("text")) {
+			try {
+				QuestionText que = questionService.findTextById(Integer.parseInt(qId));
+				if (que != null) {
+					UserAnswers ans = new UserAnswers();
+					ans.setqId(Integer.parseInt(qId));
+					ans.setReply(reply.getBytes());
+					ans.setType("text");
+					ans.setQtype(qType);
+					ans.setUserId((String) request.getSession().getAttribute("username"));
+					ans.setQue(que.getTitle().getBytes());
+					if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(qId),
+							(String) request.getSession().getAttribute("username")) != null) {
+						userAnsService.updateUserAnswer(ans);
+					} else {
+						userAnsService.saveUserAnswer(ans);
+					}
+					return "redirect:writesurvey/" + (Integer.parseInt(qId) + 1);
+				} else {
+					return "redirect:writesurvey/" + (qId);
+				}
+			} catch (Exception ex) {
+				return "redirect:write";
 			}
-			return "redirect:writesurvey/" + (qId + 1);
 		} else {
-			return "redirect:writesurvey/" + (qId);
-		}
-		}
-		catch(Exception ex){
-			return "redirect:write";
+			try {
+				String[] sp=qId.split("_");
+				QuestionAudio que = questionService.findAudioById(qId);
+				if (que != null) {
+					UserAnswers ans = new UserAnswers();
+					ans.setqId(Integer.parseInt(sp[1]));
+					ans.setReply(reply.getBytes());
+					ans.setType("text");
+					ans.setQtype(qType);
+					ans.setUserId((String) request.getSession().getAttribute("username"));
+					ans.setQue(que.getTitle());
+					if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
+							(String) request.getSession().getAttribute("username")) != null) {
+						userAnsService.updateUserAnswer(ans);
+					} else {
+						userAnsService.saveUserAnswer(ans);
+					}
+					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+				} else {
+					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+				}
+			} catch (Exception ex) {
+				return "redirect:write";
+			}
 		}
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = { "/savespeakans" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/{type}/savespeakans" }, method = RequestMethod.POST)
 	public String saveAnswerAudio(HttpServletRequest request, @RequestParam("reply") MultipartFile reply,
-			@RequestParam("qId") Integer qId) throws IOException {
-		Question que = questionService.findById(qId);
-		if (que != null) {
-			UserAnswers ans = new UserAnswers();
-			ans.setqId(qId);
-			ans.setReply(reply.getBytes());
-			ans.setType("Audio");
-			ans.setQtype(que.getTitletype());
-			ans.setUserId((String) request.getSession().getAttribute("username"));
-			ans.setQue(que.getTitle());
-			if (userAnsService.findUserAnswerByQuestionId(qId,
-					(String) request.getSession().getAttribute("username")) != null) {
-				userAnsService.updateUserAnswer(ans);
+			@RequestParam("qId") String qId, @PathVariable("type")  String qType) throws IOException {
+		if (qType.equalsIgnoreCase("text")) {
+			TextQuestion temp = new TextQuestion();
+			//String[] sp=qId.split("_");
+			QuestionText que = questionService.findTextById(Integer.parseInt(qId));
+			if (que != null) {
+				UserAnswers ans = new UserAnswers();
+				ans.setqId(Integer.parseInt(qId));
+				ans.setReply(reply.getBytes());
+				ans.setType("Audio");
+				ans.setQtype(qType);
+				ans.setUserId((String) request.getSession().getAttribute("username"));
+				ans.setQue(que.getTitle().getBytes());
+				if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(qId),
+						(String) request.getSession().getAttribute("username")) != null) {
+					userAnsService.updateUserAnswer(ans);
+				} else {
+					userAnsService.saveUserAnswer(ans);
+				}
+				return "../speaksurvey/" + (Integer.parseInt(qId) + 1);
 			} else {
-				userAnsService.saveUserAnswer(ans);
+				return "../speaksurvey/" + (Integer.parseInt(qId));
 			}
-			return "../speaksurvey/" + (qId + 1);
 		} else {
-			return "../speaksurvey/" + (qId);
+			QuestionAudio que = questionService.findAudioById(qId);
+			String[] sp=qId.split("_");
+			if (que != null) {
+				UserAnswers ans = new UserAnswers();
+				ans.setqId(Integer.parseInt(sp[1]));
+				ans.setReply(reply.getBytes());
+				ans.setType("Audio");
+				ans.setQtype(qType);
+				ans.setUserId((String) request.getSession().getAttribute("username"));
+				ans.setQue(que.getTitle());
+				if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
+						(String) request.getSession().getAttribute("username")) != null) {
+					userAnsService.updateUserAnswer(ans);
+				} else {
+					userAnsService.saveUserAnswer(ans);
+				}
+				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+			} else {
+				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+			}
 		}
 	}
 	
-	@RequestMapping(value = { "/last" }, method = RequestMethod.GET)
-	public String getLastPage(ModelMap model, HttpServletRequest request) {
+	@RequestMapping(value = { "/{type}/last" }, method = RequestMethod.GET)
+	public String getLastPage(ModelMap model, HttpServletRequest request,@PathVariable("type")  String qType) {
 		List<Admin> myList = adminService.findAllAdmins();
 		model.addAttribute("lastpage", new String(myList.get(myList.size() - 1).getLastpage()));
 		request.getSession().setAttribute("username", null);
@@ -320,28 +411,27 @@ public class AppController {
 		return "newquestion";
 	}
 	
-	@RequestMapping(value = { "/managequestions" }, method = RequestMethod.GET)
-	public String managequestions(ModelMap model) {
-
-		List<Question> myList = questionService.findAllQuestions();
-		for (Question q : myList) {
-			if (q.getTitletype().equalsIgnoreCase("text")) {
-				q.setTitletype(new String(q.getTitle()));
-			}
-		}
+	@RequestMapping(value = { "/managetextquestions" }, method = RequestMethod.GET)
+	public String manageTextquestions(ModelMap model) {
+		List<QuestionText> myList = questionService.findAllTextQuestions();
+		System.out.println(myList.size());
 		model.addAttribute("managequestions", myList);
-
-		return "managequestions";
+		return "managetextquestions";
+	}
+	@RequestMapping(value = { "/manageaudioquestions" }, method = RequestMethod.GET)
+	public String manageAudioquestions(ModelMap model) {
+		List<QuestionAudio> myList = questionService.findAllAudioQuestions();
+		model.addAttribute("managequestions", myList);
+		return "manageaudioquestions";
 	}
 
 	@RequestMapping(value = { "/newquestionastext" }, method = RequestMethod.POST)
 	@ResponseBody
 	public String saveQuestionText(@RequestParam("title") String title, @RequestParam("options") List<String> options) {
-		Question que = new Question();
+		QuestionText que = new QuestionText();
 		que.setOptions(options);
-		que.setTitle(title.getBytes());
-		que.setTitletype("text");
-		questionService.saveQuestion(que);
+		que.setTitle(title);
+		questionService.saveTextQuestion(que);
 		return "success";
 	}
 
@@ -350,25 +440,40 @@ public class AppController {
 	public String saveQuestionAudio(@RequestParam("data") MultipartFile data,
 			@RequestParam("options") List<String> options) throws IOException {
 
-		Question que = new Question();
+		QuestionAudio que = new QuestionAudio();
 		que.setOptions(options);
 		que.setTitle(data.getBytes());
-		que.setTitletype("Audio");
-		questionService.saveQuestion(que);
+		questionService.saveAudioQuestion(que);
 		return "success";
 	}
 
 
-	@RequestMapping(value = { "/getAllQuestions" }, method = RequestMethod.GET)
-	public String getAllQuestions() {
-		List<Question> myList = questionService.findAllQuestions();
+	@RequestMapping(value = { "/getAllTextQuestions" }, method = RequestMethod.GET)
+	public String getAllTextQuestions() {
+		List<QuestionText> myList = questionService.findAllTextQuestions();
 		List<TextQuestion> myTList = new ArrayList<TextQuestion>();
-		for (Question que : myList) {
+		for (QuestionText que : myList) {
 			TextQuestion temp = new TextQuestion();
 			temp.setId(que.getId());
 			temp.setOptions(que.getOptions());
 			temp.setTitle(new String(que.getTitle()));
-			temp.setTitletype(que.getTitletype());
+			temp.setTitletype("text");
+			myTList.add(temp);
+		}
+		Gson g = new Gson();
+		return g.toJson(myTList);
+	}
+	@RequestMapping(value = { "/getAllAudioQuestions" }, method = RequestMethod.GET)
+	public String getAllAudioQuestions() {
+		List<QuestionAudio> myList = questionService.findAllAudioQuestions();
+		List<TextQuestion> myTList = new ArrayList<TextQuestion>();
+		for (QuestionAudio que : myList) {
+			TextQuestion temp = new TextQuestion();
+			String[] sp=que.getId().split("_");
+			temp.setId(Integer.parseInt(sp[1]));
+			temp.setOptions(que.getOptions());
+			temp.setTitle(new String(que.getTitle()));
+			temp.setTitletype("audio");
 			myTList.add(temp);
 		}
 		Gson g = new Gson();
@@ -376,14 +481,14 @@ public class AppController {
 	}
 
 	@RequestMapping(value = "/getQuestionFile/{qId}")
-	public void getQuestionFile(@PathVariable("qId") int id, ModelMap model, HttpServletResponse response)
+	public void getQuestionFile(@PathVariable("qId") String id, ModelMap model, HttpServletResponse response)
 			throws IOException, ServletException {
 
 		response.setContentType("audio/vnd.wave");
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + "que.wav" + "\"");
 		try {
-			Question myQue = questionService.findById(id);
+			QuestionAudio myQue = questionService.findAudioById(id);
 			//System.out.println(myQue.getTitle().length);
 			response.getOutputStream().write(myQue.getTitle());
 	
@@ -393,28 +498,35 @@ public class AppController {
 	}
 	
 	/****************** Results *************************/
-	
-	@RequestMapping(value = { "/result" }, method = RequestMethod.GET)
-	public String getResults(ModelMap model) {
 
+	
+	@RequestMapping(value = { "/{type}/result" }, method = RequestMethod.GET)
+	public String getResult(ModelMap model, @PathVariable("type")  String qType) {
 		List<User> users = userService.findAllUsers();
 		model.addAttribute("users", users);
+		model.addAttribute("type", qType);
 		return "result";
 	}
 	
 	
-	@RequestMapping(value = { "/useranswers/{userId}" }, method = RequestMethod.GET)
-	public String getResults(ModelMap model, @PathVariable String userId) {
+	@RequestMapping(value = { "/{type}/useranswers/{userId}" }, method = RequestMethod.GET)
+	public String getResults(ModelMap model, @PathVariable String userId, @PathVariable("type") String qType) {
 		List<UserAnswers> ans = userAnsService.findAllUserAnswers(userId);
+		List<UserAnswers> ret = new LinkedList<UserAnswers>();
 		for (UserAnswers q : ans) {
-			if (q.getType().equalsIgnoreCase("text")) {
-				q.setType(new String(q.getReply()));
-			}
-			if (q.getQtype().equalsIgnoreCase("text")) {
-				q.setQtype(new String(q.getQue()));
+			System.out.println(q.getQtype());
+			if (q.getQtype().equalsIgnoreCase(qType)) {
+				if (q.getType().equalsIgnoreCase("text")) {
+					q.setType(new String(q.getReply()));
+				}
+				if (q.getQtype().equalsIgnoreCase("text")) {
+					q.setQtype(new String(q.getQue()));
+				}
+				ret.add(q);
 			}
 		}
-		model.addAttribute("answers", ans);
+		model.addAttribute("answers", ret);
+		model.addAttribute("type", qType);
 		return "useranswers";
 	}
 
