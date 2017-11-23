@@ -11,7 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
 
-public class CustomIdGenerator implements IdentifierGenerator {
+public class CustomAudioAudioIdGenerator implements IdentifierGenerator {
 	@Override
 	public Serializable generate(SessionImplementor session, Object object)
             throws HibernateException {
@@ -22,7 +22,7 @@ public class CustomIdGenerator implements IdentifierGenerator {
         try {
 
         	 ps= connection
-        			 .prepareStatement("SELECT max(id) as value from QUESTION_COUNT");
+        			 .prepareStatement("SELECT max(id) as value from QUESTION_COUNT_AUDIO_AUDIO");
 
              ResultSet rs = ps.executeQuery();
              if(rs==null){

@@ -7,15 +7,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import com.cmu.model.QuestionAudio;
+import com.cmu.model.QuestionAudioForAudio;
+import com.cmu.model.QuestionAudioForAudio;
 
 
 
-@Repository("questionAudioDao")
-public class QuestionAudioDaoImpl extends AbstractDao<String, QuestionAudio> implements QuestionAudioDao {
+@Repository("questionAudioForAudioDao")
+public class QuestionAudioForAudioDaoImpl extends AbstractDao<String, QuestionAudioForAudio> implements QuestionAudioForAudioDao {
 
-	public QuestionAudio findById(String id) {
-		QuestionAudio Question = getByKey(id);
+	public QuestionAudioForAudio findById(String id) {
+		QuestionAudioForAudio Question = getByKey(id);
 		return Question;
 	}
 
@@ -28,23 +29,23 @@ public class QuestionAudioDaoImpl extends AbstractDao<String, QuestionAudio> imp
 	}*/
 
 	@SuppressWarnings("unchecked")
-	public List<QuestionAudio> findAllQuestions() {
+	public List<QuestionAudioForAudio> findAllQuestions() {
 		Criteria criteria = createEntityCriteria().addOrder(Order.asc("title"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<QuestionAudio> Questions = (List<QuestionAudio>) criteria.list();
+		List<QuestionAudioForAudio> Questions = (List<QuestionAudioForAudio>) criteria.list();
 		
 		return Questions;
 	}
 
-	public void save(QuestionAudio Question) {
+	public void save(QuestionAudioForAudio Question) {
 		persist(Question);
 	}
 
-	/*public void deleteBySSO(String sso) {
+	public void deleteById(String id) {
 		Criteria crit = createEntityCriteria();
-		crit.add(Restrictions.eq("ssoId", sso));
-		Question Question = (Question)crit.uniqueResult();
+		crit.add(Restrictions.eq("id", id));
+		QuestionAudioForAudio Question = (QuestionAudioForAudio)crit.uniqueResult();
 		delete(Question);
-	}*/
+	}
 
 }

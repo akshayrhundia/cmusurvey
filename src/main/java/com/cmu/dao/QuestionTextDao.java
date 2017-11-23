@@ -12,10 +12,14 @@ public interface QuestionTextDao {
 	//Question findBySSO(String sso);
 	
 	void save(QuestionText Question);
-	
+	void update(QuestionText Question);
+	void updateTitle(QuestionText Question);
 	//void deleteBySSO(String sso);
 	
 	List<QuestionText> findAllQuestions();
+	
+	public void deleteById(int id);
+	int getMax();
 
 }
 

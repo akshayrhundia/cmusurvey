@@ -8,12 +8,33 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Upload/Download/Delete Documents</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link href="<c:url value='/static/css/bootstrap.css' />"
 	rel="stylesheet"></link>
 <link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/editor.css' />" rel="stylesheet"></link>
+<script src="<c:url value='/static/js/editor.js' />"></script>
 </head>
 
 <body>
+<div class="loading" id="loading">Loading&#8230;</div>
 	<nav class="navbar navbar-inverse">
 		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->
@@ -56,6 +77,8 @@
 								<th>No.</th>
 								<th>Question type</th>
 								<th>Question</th>
+								<th></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -64,7 +87,11 @@
 								<tr>
 									<td>${doc.id}</td>
 									<td>Text</td>
-									<td>${doc.title}</td>
+									<td contenteditable='true' id='${doc.id}'>${doc.title}</td>
+									<td><button onclick="saveQuestion(${doc.id})" class="btn btn-primary">
+					Save</button></td>
+									<td><button onclick="deleteQuestion(${doc.id})" class="btn btn-primary">
+					Delete</button></td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -73,5 +100,33 @@
 			</div>
 		</div>
 	</div>
+	<script>
+	$('#loading').hide();
+	function deleteQuestion(id){
+		$('#loading').show();
+		$.get("text/delete/"+id, function(data, rstatus) {
+		   		    //alert("Data: " + data + "\nStatus: " + status);
+			        $('#loading').hide();
+			        location.reload();
+			    }
+		);
+	}
+	function saveQuestion(id){
+		dtitle=document.getElementById ( id ).innerText
+		//alert(dtitle);
+		$('#loading').show();
+		
+		$.post("text/updatequestiontitle/"+id, {
+			 title:dtitle
+			},
+			    function(data, status){
+			        //alert("Data: " + data + "\nStatus: " + status);
+			        $('#loading').hide();
+			        location.reload();
+			});
+	}
+
+	</script>
+
 </body>
 </html>

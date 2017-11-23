@@ -97,8 +97,8 @@ $('#loading').show();
 				<li><a href="managetextquestions">Manage
 							Text Questions</a></li>
 				<li><a href="manageaudioquestions">Manage Audio Questions</a></li>
-				<li><a href="textresult">Text Results</a></li>
-				<li><a href="audioresult">Audio Results</a></li>
+				<li><a href="text/result">Text Results</a></li>
+				<li><a href="audio/result">Audio Results</a></li>
 			
 			</ul>
 		</div>

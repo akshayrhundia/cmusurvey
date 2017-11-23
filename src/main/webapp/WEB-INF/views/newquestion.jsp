@@ -101,8 +101,8 @@ ul {
 					<div class="col-sm-9">
 						<select id="titletype" class="form-control">
 							<option value="Text">Text</option>
-							<option value="Video">Video</option>
 							<option value="Audio">Audio</option>
+							<option value="Audio File">Audio File</option>
 
 						</select>
 					</div>
@@ -264,8 +264,13 @@ $('#titletype').change(function() {
 	  +"<button onclick=\"reset(this);\" disabled>reset</button>"
 	  +"<h4>Recorded Question</h4>"
 	  +"<ul id=\"recordingslist\"></ul>";
+	  //alert(type);
+	  var audioFile='<input type="file" name="file-select" id="file-select" accept="audio/*">';
 	  if(type==="Audio"){
 		  document.getElementById("que").innerHTML = audioHTML;
+	  }
+	  if(type==="Audio File"){
+		  document.getElementById("que").innerHTML = audioFile;
 	  }
 	  var txtHTML=""
 	});
@@ -297,12 +302,53 @@ $('#titletype').change(function() {
 		     
 		   
 	}
+	function uploadMyAudio(){
+		  //var url = URL.createObjectURL(gBlob);
+		 // alert("uploading...");
+		  var fileSelect = document.getElementById('file-select');
+		  
+		  var files = fileSelect.files;
+		  var file = files[0];
+		// Check the file type.
+		  if (!file.type.match('audio.*')) {
+		    return;
+		  }
+
+		  
+	      var fd = new FormData();
+	      
+	      var option1 = document.getElementById('option1');
+		  var option2 = document.getElementById('option2');
+		  //var titleByte=toUTF8Array(title.value);
+		  var opts=[];
+		  opts.push(option1.value);
+		  opts.push(option2.value);
+		     
+		  fd.append('type', 'audio');
+		  fd.append('options', opts);
+	      fd.append('fname', 'question.wav');
+	      fd.append('data', file);
+	      $.ajax({
+	          type: 'POST',
+	          url: 'newquestionasaudio',
+	          data: fd,
+	          contentType: false,
+	          processData: false
+	      }).done(function(data) {
+	    	  window.location.replace("newquestion");
+	      }).fail(function() { alert("error"); });
+	     
+	   
+}
 	function myFunction(){
 		 $('#loading').show();
 		if($('#titletype').val()==="Audio")
 			saveMyAudio();
 		if($('#titletype').val()==="Text")
 			saveMyText();
+		if($('#titletype').val()==="Audio File")
+			uploadMyAudio();
+		
 		
 		 
 	}

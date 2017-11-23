@@ -23,8 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "QUESTION_COUNT")
-public class Count {
+@Table(name = "QUESTION_COUNT_AUDIO_AUDIO")
+public class CountAudioForAudio {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

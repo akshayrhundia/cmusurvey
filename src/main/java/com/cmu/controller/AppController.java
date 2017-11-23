@@ -40,7 +40,8 @@ import org.w3c.dom.Document;
 
 import com.cmu.model.Admin;
 import com.cmu.model.FileBucket;
-import com.cmu.model.QuestionAudio;
+import com.cmu.model.QuestionAudioForText;
+import com.cmu.model.QuestionAudioForAudio;
 import com.cmu.model.QuestionText;
 import com.cmu.model.User;
 import com.cmu.model.UserAnswers;
@@ -196,9 +197,25 @@ public class AppController {
 			} catch (Exception ex) {
 				return "redirect:write";
 			}
-		} else {
+		} else if(type.equalsIgnoreCase("audiotext")){
 			try {
-				QuestionAudio que = questionService.findAudioById(qId);
+				QuestionAudioForText que = questionService.findAudioForTextById(qId);
+				if (que != null) {
+					model.addAttribute("question", que);
+					model.addAttribute("qId", que.getId() + 1);
+					return "wsurvey";
+				} else {
+					List<Admin> admins = adminService.findAllAdmins();
+					Admin temp = admins.get(admins.size() - 1);
+					model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
+					return "over";
+				}
+			} catch (Exception ex) {
+				return "redirect:write";
+			}
+		}else {
+			try {
+				QuestionAudioForAudio que = questionService.findAudioForAudioById(qId);
 				if (que != null) {
 					model.addAttribute("question", que);
 					model.addAttribute("qId", que.getId() + 1);
@@ -231,8 +248,22 @@ public class AppController {
 			model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
 			return "over";
 		}
+		}else if(type.equalsIgnoreCase("audiotext")){
+			QuestionAudioForText que = questionService.findAudioForTextById(qId);
+			if (que != null) {
+				model.addAttribute("question", que);
+				String[] sp=qId.split("_");
+				model.addAttribute("qId", Integer.parseInt(sp[1]) + 1);
+				model.addAttribute("titletype", type);
+				return "ssurvey";
+			} else {
+				List<Admin> admins = adminService.findAllAdmins();
+				Admin temp = admins.get(admins.size() - 1);
+				model.addAttribute("secondlastpage", new String(temp.getSecondlastpage()));
+				return "over";
+			}
 		}else{
-			QuestionAudio que = questionService.findAudioById(qId);
+			QuestionAudioForAudio que = questionService.findAudioForAudioById(qId);
 			if (que != null) {
 				model.addAttribute("question", que);
 				String[] sp=qId.split("_");
@@ -246,6 +277,7 @@ public class AppController {
 				return "over";
 			}
 		}
+		
 	}
 	
 	@RequestMapping(value = { "/{type}/savewriteans" }, method = RequestMethod.POST)
@@ -276,10 +308,36 @@ public class AppController {
 			} catch (Exception ex) {
 				return "redirect:write";
 			}
-		} else {
+		} else if(qType.equalsIgnoreCase("audiotext")) {
 			try {
 				String[] sp=qId.split("_");
-				QuestionAudio que = questionService.findAudioById(qId);
+				QuestionAudioForText que = questionService.findAudioForTextById(qId);
+				if (que != null) {
+					UserAnswers ans = new UserAnswers();
+					ans.setqId(Integer.parseInt(sp[1]));
+					ans.setReply(reply.getBytes());
+					ans.setType("text");
+					ans.setQtype(qType);
+					ans.setUserId((String) request.getSession().getAttribute("username"));
+					ans.setQue(que.getTitle());
+					if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
+							(String) request.getSession().getAttribute("username")) != null) {
+						userAnsService.updateUserAnswer(ans);
+					} else {
+						userAnsService.saveUserAnswer(ans);
+					}
+					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+				} else {
+					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+				}
+			} catch (Exception ex) {
+				return "redirect:write";
+			}
+		}
+		else {
+			try {
+				String[] sp=qId.split("_");
+				QuestionAudioForAudio que = questionService.findAudioForAudioById(qId);
 				if (que != null) {
 					UserAnswers ans = new UserAnswers();
 					ans.setqId(Integer.parseInt(sp[1]));
@@ -330,8 +388,30 @@ public class AppController {
 			} else {
 				return "../speaksurvey/" + (Integer.parseInt(qId));
 			}
-		} else {
-			QuestionAudio que = questionService.findAudioById(qId);
+		} else if(qType.equalsIgnoreCase("audiotext")) {
+			QuestionAudioForText que = questionService.findAudioForTextById(qId);
+			String[] sp=qId.split("_");
+			if (que != null) {
+				UserAnswers ans = new UserAnswers();
+				ans.setqId(Integer.parseInt(sp[1]));
+				ans.setReply(reply.getBytes());
+				ans.setType("Audio");
+				ans.setQtype(qType);
+				ans.setUserId((String) request.getSession().getAttribute("username"));
+				ans.setQue(que.getTitle());
+				if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
+						(String) request.getSession().getAttribute("username")) != null) {
+					userAnsService.updateUserAnswer(ans);
+				} else {
+					userAnsService.saveUserAnswer(ans);
+				}
+				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+			} else {
+				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+			}
+		}
+		else {
+			QuestionAudioForAudio que = questionService.findAudioForAudioById(qId);
 			String[] sp=qId.split("_");
 			if (que != null) {
 				UserAnswers ans = new UserAnswers();
@@ -418,9 +498,15 @@ public class AppController {
 		model.addAttribute("managequestions", myList);
 		return "managetextquestions";
 	}
-	@RequestMapping(value = { "/manageaudioquestions" }, method = RequestMethod.GET)
-	public String manageAudioquestions(ModelMap model) {
-		List<QuestionAudio> myList = questionService.findAllAudioQuestions();
+	@RequestMapping(value = { "/manageaudiofortextquestions" }, method = RequestMethod.GET)
+	public String manageAudioForTextquestions(ModelMap model) {
+		List<QuestionAudioForText> myList = questionService.findAllAudioForTextQuestions();
+		model.addAttribute("managequestions", myList);
+		return "manageaudioquestions";
+	}
+	@RequestMapping(value = { "/manageaudioforaudioquestions" }, method = RequestMethod.GET)
+	public String manageAudioForAudioquestions(ModelMap model) {
+		List<QuestionAudioForAudio> myList = questionService.findAllAudioForAudioQuestions();
 		model.addAttribute("managequestions", myList);
 		return "manageaudioquestions";
 	}
@@ -434,16 +520,36 @@ public class AppController {
 		questionService.saveTextQuestion(que);
 		return "success";
 	}
-
-	@RequestMapping(value = { "/newquestionasaudio" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/{type}/updatequestiontitle/{qId}" }, method = RequestMethod.POST)
 	@ResponseBody
-	public String saveQuestionAudio(@RequestParam("data") MultipartFile data,
+	public String updateQuestionText(@RequestParam("title") String title, @PathVariable("type") String type, @PathVariable("qId") int qId) {
+		QuestionText que = new QuestionText();
+		que.setId(qId);
+		que.setTitle(title);
+		questionService.updateTextQuestionTitle(que);
+		return "success";
+	}
+
+	@RequestMapping(value = { "/newquestionasaudiofortext" }, method = RequestMethod.POST)
+	@ResponseBody
+	public String saveQuestionAudioForText(@RequestParam("data") MultipartFile data,
 			@RequestParam("options") List<String> options) throws IOException {
 
-		QuestionAudio que = new QuestionAudio();
+		QuestionAudioForText que = new QuestionAudioForText();
 		que.setOptions(options);
 		que.setTitle(data.getBytes());
-		questionService.saveAudioQuestion(que);
+		questionService.saveAudioQuestionForText(que);
+		return "success";
+	}
+	@RequestMapping(value = { "/newquestionasaudioforaudio" }, method = RequestMethod.POST)
+	@ResponseBody
+	public String saveQuestionAudioForAudio(@RequestParam("data") MultipartFile data,
+			@RequestParam("options") List<String> options) throws IOException {
+
+		QuestionAudioForAudio que = new QuestionAudioForAudio();
+		que.setOptions(options);
+		que.setTitle(data.getBytes());
+		questionService.saveAudioQuestionForAudio(que);
 		return "success";
 	}
 
@@ -463,11 +569,27 @@ public class AppController {
 		Gson g = new Gson();
 		return g.toJson(myTList);
 	}
-	@RequestMapping(value = { "/getAllAudioQuestions" }, method = RequestMethod.GET)
-	public String getAllAudioQuestions() {
-		List<QuestionAudio> myList = questionService.findAllAudioQuestions();
+	@RequestMapping(value = { "/getAllAudioForTextQuestions" }, method = RequestMethod.GET)
+	public String getAllAudioForTextQuestions() {
+		List<QuestionAudioForText> myList = questionService.findAllAudioForTextQuestions();
 		List<TextQuestion> myTList = new ArrayList<TextQuestion>();
-		for (QuestionAudio que : myList) {
+		for (QuestionAudioForText que : myList) {
+			TextQuestion temp = new TextQuestion();
+			String[] sp=que.getId().split("_");
+			temp.setId(Integer.parseInt(sp[1]));
+			temp.setOptions(que.getOptions());
+			temp.setTitle(new String(que.getTitle()));
+			temp.setTitletype("audio");
+			myTList.add(temp);
+		}
+		Gson g = new Gson();
+		return g.toJson(myTList);
+	}
+	@RequestMapping(value = { "/getAllAudioForAudioQuestions" }, method = RequestMethod.GET)
+	public String getAllAudioForAudioQuestions() {
+		List<QuestionAudioForAudio> myList = questionService.findAllAudioForAudioQuestions();
+		List<TextQuestion> myTList = new ArrayList<TextQuestion>();
+		for (QuestionAudioForAudio que : myList) {
 			TextQuestion temp = new TextQuestion();
 			String[] sp=que.getId().split("_");
 			temp.setId(Integer.parseInt(sp[1]));
@@ -480,15 +602,15 @@ public class AppController {
 		return g.toJson(myTList);
 	}
 
-	@RequestMapping(value = "/getQuestionFile/{qId}")
-	public void getQuestionFile(@PathVariable("qId") String id, ModelMap model, HttpServletResponse response)
+	@RequestMapping(value = "/getQuestionAudioForTextFile/{qId}")
+	public void getQuestionAudioForTextFile(@PathVariable("qId") String id, ModelMap model, HttpServletResponse response)
 			throws IOException, ServletException {
 
 		response.setContentType("audio/vnd.wave");
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + "que.wav" + "\"");
 		try {
-			QuestionAudio myQue = questionService.findAudioById(id);
+			QuestionAudioForText myQue = questionService.findAudioForTextById(id);
 			//System.out.println(myQue.getTitle().length);
 			response.getOutputStream().write(myQue.getTitle());
 	
@@ -496,6 +618,37 @@ public class AppController {
 			e.printStackTrace();
 		}
 	}
+	@RequestMapping(value = "/getQuestionAudioForAudioFile/{qId}")
+	public void getQuestionAudioForAudioFile(@PathVariable("qId") String id, ModelMap model, HttpServletResponse response)
+			throws IOException, ServletException {
+
+		response.setContentType("audio/vnd.wave");
+
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + "que.wav" + "\"");
+		try {
+			QuestionAudioForAudio myQue = questionService.findAudioForAudioById(id);
+			//System.out.println(myQue.getTitle().length);
+			response.getOutputStream().write(myQue.getTitle());
+	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = { "/{type}/deleteaudiofortext/{qId}" }, method = RequestMethod.GET)
+	public String deleteQuestion(@PathVariable("qId") String qId, ModelMap model, @PathVariable("type") String type) {
+		if (type.equalsIgnoreCase("text")) {
+			questionService.deleteTextById(Integer.parseInt(qId));
+		}else if (type.equalsIgnoreCase("audiotext")) {
+			questionService.deleteTextById(Integer.parseInt(qId));
+		}  
+		else {
+			questionService.deleteAudioForAudioById(qId);
+		}
+		return "";
+	}
+	
 	
 	/****************** Results *************************/
 

@@ -8,9 +8,42 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Upload/Download/Delete Documents</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link href="<c:url value='/static/css/bootstrap.css' />"
 	rel="stylesheet"></link>
 <link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
+<link href="<c:url value='/static/css/editor.css' />" rel="stylesheet"></link>
+<script src="<c:url value='/static/js/editor.js' />"></script>
+<script>
+	$('#loading').hide();
+	function deleteQuestion(id){
+		$('#loading').show();
+		$.get("audio/delete/"+id, function(data, rstatus) {
+		   		    //alert("Data: " + data + "\nStatus: " + status);
+			        $('#loading').hide();
+			        location.reload();
+			    }
+		);
+	}
+
+	</script>
 </head>
 
 <body>
@@ -57,6 +90,7 @@
 								<th>No.</th>
 								<th>Question type</th>
 								<th>Question</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -66,10 +100,11 @@
 									<td>${doc.id}</td>
 									<td>Audio</td>
 
-									<td><audio controls>
-											<source src="getQuestionFile/${doc.id}" type="audio/wav" />
-										</audio></td>
-
+									<td><audio controls><source src="getQuestionFile/${doc.id}" type="audio/wav" />
+									</audio>
+									</td>
+									<td><button onclick="deleteQuestion('${doc.id}')" class="btn btn-primary">
+					Delete</button></td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -78,5 +113,6 @@
 			</div>
 		</div>
 	</div>
+	
 </body>
 </html>

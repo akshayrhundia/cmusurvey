@@ -23,21 +23,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "QUESTION_AUDIO")
-public class QuestionAudio {
+@Table(name = "QUESTION_COUNT_AUDIO_TEXT")
+public class CountAudioForText {
 
 	@Id
-	@GenericGenerator(name = "sequence_que_id", strategy = "com.cmu.util.CustomIdGenerator")
-	@GeneratedValue(generator = "sequence_que_id") 
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 
-	@Lob
-	@Basic(fetch = FetchType.EAGER)
-	@Column(name = "title", nullable = false)
-	private byte[] title;
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Column(name = "options", nullable = false)
-	private List<String> options = new ArrayList<String>();
 
 }
