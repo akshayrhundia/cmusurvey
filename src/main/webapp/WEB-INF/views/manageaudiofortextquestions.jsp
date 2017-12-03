@@ -35,7 +35,7 @@
 	$('#loading').hide();
 	function deleteQuestion(id){
 		$('#loading').show();
-		$.get("audio/delete/"+id, function(data, rstatus) {
+		$.get("audiotext/delete/"+id, function(data, rstatus) {
 		   		    //alert("Data: " + data + "\nStatus: " + status);
 			        $('#loading').hide();
 			        location.reload();
@@ -65,10 +65,25 @@
 					<li><a href="admin">Home</a></li>
 					<li><a href="newquestion">Add Question</a></li>
 
-					<li><a href="managetextquestions">Manage Text Questions</a></li>
-					<li class="active"><a href="manageaudioquestions">Manage Audio Questions</a></li>
-					<li><a href="text/result">Text Results</a></li>
-					<li><a href="audio/result">Audio Results</a></li>
+					<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage Question
+        		<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="managetextquestions">Manage
+							Text Questions</a></li>
+				<li><a href="manageaudiofortextquestions">Manage Audio-Text Questions</a></li>
+				<li><a href="manageaudioforaudioquestions">Manage Audio-Audio Questions</a></li>
+				
+				</ul></li>
+				<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Results
+        		<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+							<li><a href="text/getallanswers">Text Results</a></li>
+				<li><a href="audiotext/getallanswers">Audio-Text Results</a></li>
+				<li><a href="audioaudio/getallanswers">Audio-Audio Results</a></li>
+							</ul>
+				</li>
 
 				</ul>
 			</div>
@@ -100,7 +115,7 @@
 									<td>${doc.id}</td>
 									<td>Audio</td>
 
-									<td><audio controls><source src="getQuestionFile/${doc.id}" type="audio/wav" />
+									<td><audio controls><source src="getQuestionAudioForTextFile/${doc.id}" type="audio/wav" />
 									</audio>
 									</td>
 									<td><button onclick="deleteQuestion('${doc.id}')" class="btn btn-primary">

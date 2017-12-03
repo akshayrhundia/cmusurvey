@@ -65,6 +65,11 @@ public class UserAnswersServiceImpl implements UserAnswersService{
 		
 	}
 
+	@Override
+	public List<UserAnswers> findUserAnswerByQuestionType(String type) {
+		return dao.findAllUserAnswersByQuestionType(type);
+	}
+
 	/*public boolean isUserAnswersSSOUnique(Integer id, String sso) {
 		UserAnswers UserAnswers = findBySSO(sso);
 		return ( UserAnswers == null || ((id != null) && (UserAnswers.getId() == id)));

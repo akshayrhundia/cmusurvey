@@ -52,25 +52,43 @@
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="../admin">Home</a></li>
 					<li><a href="../newquestion">Add Question</a></li>
-					<li><a href="../managetextquestions">Manage Text Questions</a></li>
-					<li><a href="../manageaudioquestions">Manage Audio
-							Questions</a></li>
-					<c:choose>
-						<c:when test="${type == 'text'}">
-							<li class="active"><a href="text/result">Text Results</a></li>
-							<li><a href="../audio/result">Audio Results</a></li>
-						</c:when>
-
-						<c:otherwise>
-							<li><a href="../text/result">Text Results</a></li>
-							<li class="active"><a href="audio/result">Audio Results</a></li>
-						</c:otherwise>
-					</c:choose>
 
 
 
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Manage Question <span
+							class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="../managetextquestions">Manage Text
+									Questions</a></li>
+							<li><a href="../manageaudiofortextquestions">Manage
+									Audio-Text Questions</a></li>
+							<li><a href="../manageaudioforaudioquestions">Manage
+									Audio-Audio Questions</a></li>
 
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Results <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<c:choose>
+								<c:when test="${type == 'text'}">
+									<li><a href="text/result">Text Results</a></li>
+									<li><a href="../audiotext/result">Audio-Text Results</a></li>
+									<li><a href="../audioaudio/result">Audio-Audio Results</a></li>
+								</c:when>
+								<c:when test="${type == 'audiotext'}">
+									<li><a href="../text/result">Text Results</a></li>
+									<li><a href="audiotext/result">Audio-Text Results</a></li>
+									<li><a href="../audioaudio/result">Audio-Audio Results</a></li>
+								</c:when>
 
+								<c:otherwise>
+									<li><a href="../text/result">Text Results</a></li>
+									<li><a href="../audiotext/result">Audio-Text Results</a></li>
+									<li><a href="audioaudio/result">Audio-Audio Results</a></li>
+								</c:otherwise>
+							</c:choose>
+						</ul></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->

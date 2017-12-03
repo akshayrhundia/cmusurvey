@@ -91,7 +91,7 @@ public class QuestionServiceImpl implements QuestionService{
 		int max=daoCountAudioForText.getMax();
 		QuestionAudioForText ret=null;
 		while(cnt<=max && ret==null){
-			id="AUDIO_"+cnt;
+			id="AUDIOTEXT_"+cnt;
 			ret=daoAudioForText.findById(id);
 			cnt++;
 		}
@@ -104,7 +104,7 @@ public class QuestionServiceImpl implements QuestionService{
 		int max=daoCountAudioForAudio.getMax();
 		QuestionAudioForAudio ret=null;
 		while(cnt<=max && ret==null){
-			id="AUDIO_"+cnt;
+			id="AUDIOAUDIO_"+cnt;
 			ret=daoAudioForAudio.findById(id);
 			cnt++;
 		}

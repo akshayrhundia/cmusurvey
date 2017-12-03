@@ -27,12 +27,26 @@ public class Admin {
 
 	
 
+	public byte[] getSpeakAudioIns() {
+		return speakAudioIns;
+	}
+	public void setSpeakAudioIns(byte[] speakAudioIns) {
+		this.speakAudioIns = speakAudioIns;
+	}
+	public byte[] getWriteAudioIns() {
+		return writeAudioIns;
+	}
+	public void setWriteAudioIns(byte[] writeAudioIns) {
+		this.writeAudioIns = writeAudioIns;
+	}
 	public Admin(){
 		speakfirstpage="Empty".getBytes();
 		writefirstpage="Empty".getBytes();
 		speakIns="Empty".getBytes();
 		writeIns="Empty".getBytes();
 		lastpage="Empty".getBytes();
+		speakAudioIns="Empty".getBytes();
+		writeAudioIns="Empty".getBytes();
 	}
 	public byte[] getSpeakfirstpage() {
 		return speakfirstpage;
@@ -100,6 +114,18 @@ public class Admin {
 	@Basic(fetch = FetchType.EAGER)
 	@Column(name = "writeIns", nullable = false)
 	private byte[] writeIns;
+	
+	@Lob
+	@Basic(fetch = FetchType.EAGER)
+	@Column(name = "speakAudioIns", nullable = true)
+	private byte[] speakAudioIns;
+	
+	@Lob
+	@Basic(fetch = FetchType.EAGER)
+	@Column(name = "writeAudioIns", nullable = true)
+	private byte[] writeAudioIns;
+	
+	
 
 	
 	@Lob

@@ -16,6 +16,8 @@ public interface UserAnswersDao {
 	void deleteUserAnswerById(Integer qId,String userId);
 	
 	List<UserAnswers> findAllUserAnswers(String userId);
+	
+	List<UserAnswers> findAllUserAnswersByQuestionType(String type);
 
 }
 

@@ -49,12 +49,17 @@ $('#loading').show();
 				$("#lastPage").Editor();
 				$("#writeInsPage").Editor();
 				$("#secondlastPage").Editor();
+				$("#speakAudioInsPage").Editor();
+				$("#writeAudioInsPage").Editor();
+				
 				var speakfirstpage = document.getElementById("speakfirst");
 				var writefirst = document.getElementById("writefirst");
 				var speakIns = document.getElementById("speakIns");
 				var lastpage = document.getElementById("lastpage");
 				var writeIns = document.getElementById("writeIns");
 				var secondlastPage = document.getElementById("secondlast");
+				var speakAudioIns = document.getElementById("speakAudioIns");
+				var writeAudioIns = document.getElementById("writeAudioIns");
 				
 				$.get("getAdmin", function(data, rstatus) {
 					$('#loading').hide();
@@ -65,6 +70,8 @@ $('#loading').show();
 					lastpage.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.lastpage;
 					writeIns.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.writeIns;
 					secondlastPage.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.secondlastpage;
+					speakAudioIns.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.speakAudioIns;
+					writeAudioIns.getElementsByClassName("Editor-editor")[0].innerHTML=jdata.writeAudioIns;
 				});
 				
 				//'<span style="font-weight: bold;">istruction</span>';
@@ -93,12 +100,25 @@ $('#loading').show();
 			<ul class="nav navbar-nav navbar-right">
 				<li class="active"><a href="admin">Home</a></li>
 				<li><a href="newquestion">Add Question</a></li>
-				
-				<li><a href="managetextquestions">Manage
+				<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage Question
+        		<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="managetextquestions">Manage
 							Text Questions</a></li>
-				<li><a href="manageaudioquestions">Manage Audio Questions</a></li>
-				<li><a href="text/result">Text Results</a></li>
-				<li><a href="audio/result">Audio Results</a></li>
+				<li><a href="manageaudiofortextquestions">Manage Audio-Text Questions</a></li>
+				<li><a href="manageaudioforaudioquestions">Manage Audio-Audio Questions</a></li>
+				
+				</ul></li>
+				<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Results
+        		<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+							<li><a href="text/getallanswers">Text Results</a></li>
+				<li><a href="audiotext/getallanswers">Audio-Text Results</a></li>
+				<li><a href="audioaudio/getallanswers">Audio-Audio Results</a></li>
+							</ul>
+				</li>
 			
 			</ul>
 		</div>
@@ -120,7 +140,7 @@ $('#loading').show();
 				<table>
 					<tr>
 						<td>
-							<h2 class="demo-text">speakfirstpage</h2>
+							<h2 class="demo-text">Speaking First Page</h2>
 							<div style="width: 90%;" id="speakfirst">
 								<textarea id="speakfirstPage"></textarea>
 							</div>
@@ -130,7 +150,7 @@ $('#loading').show();
 
 					<tr>
 						<td>
-							<h2 class="demo-text">writefirstpage</h2>
+							<h2 class="demo-text">Writing First Page</h2>
 							<div style="width: 90%;" id="writefirst">
 								<textarea id="writefirstPage"></textarea>
 							</div>
@@ -142,7 +162,7 @@ $('#loading').show();
 					<tr>
 						<td>
 
-							<h2 class="demo-text">Instruction Page(Speak)</h2>
+							<h2 class="demo-text">Instruction Page(Text-Speak)</h2>
 							<div style="width: 90%;" id="speakIns">
 								<textarea id="speakInsPage"></textarea>
 							</div>
@@ -150,12 +170,33 @@ $('#loading').show();
 					</tr>
 					<tr>
 						<td>
-							<h2 class="demo-text">Instruction Page(Write)</h2>
+							<h2 class="demo-text">Instruction Page(Text-Write)</h2>
 							<div style="width: 90%;" id="writeIns">
 								<textarea id="writeInsPage"></textarea>
 							</div>
 						</td>
 					</tr>
+					
+					<tr>
+						<td>
+
+							<h2 class="demo-text">Instruction Page(Audio-Speak)</h2>
+							<div style="width: 90%;" id="speakAudioIns">
+								<textarea id="speakAudioInsPage"></textarea>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h2 class="demo-text">Instruction Page(Audio-Write)</h2>
+							<div style="width: 90%;" id="writeAudioIns">
+								<textarea id="writeAudioInsPage"></textarea>
+							</div>
+						</td>
+					</tr>
+					
+					
+					
 
 					<tr>
 						<td>
@@ -254,6 +295,8 @@ function saveMainPage(){
 	var lastpages = document.getElementById("lastpage");
 	var writeInspage = document.getElementById("writeIns");
 	var secondlastpages = document.getElementById("secondlast");
+	var speakAudioInspage = document.getElementById("speakAudioIns");
+	var writeAudioInspage = document.getElementById("writeAudioIns");
 	
 	
 	speakfirstpages = speakfirstpages.getElementsByClassName("Editor-editor")[0].innerHTML;
@@ -262,6 +305,10 @@ function saveMainPage(){
 	lastpages = lastpage.getElementsByClassName("Editor-editor")[0].innerHTML;
 	writeInspage = writeInspage.getElementsByClassName("Editor-editor")[0].innerHTML;
 	secondlastpages = secondlastpages.getElementsByClassName("Editor-editor")[0].innerHTML;
+	speakAudioInspage = speakAudioInspage.getElementsByClassName("Editor-editor")[0].innerHTML;
+	writeAudioInspage = writeAudioInspage.getElementsByClassName("Editor-editor")[0].innerHTML;
+	
+	
 	//console.log(mainv);
 	//console.log(lastv1);
 	//console.log(lastv2);
@@ -273,6 +320,8 @@ function saveMainPage(){
 		 writefirstpage:writefirstpages,
 		 speakIns:speakInspage,
 		 writeIns:writeInspage,
+		 speakAudioIns:speakAudioInspage,
+		 writeAudioIns:writeAudioInspage,
 		 lastpage:lastpages,
 		 secondlastpage:secondlastpages
 		    },

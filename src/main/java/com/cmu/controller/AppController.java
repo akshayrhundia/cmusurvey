@@ -48,6 +48,7 @@ import com.cmu.model.UserAnswers;
 import com.cmu.model.UserDocument;
 import com.cmu.pojo.AdminPojo;
 import com.cmu.pojo.TextQuestion;
+import com.cmu.pojo.UserAnswersPojo;
 import com.cmu.service.AdminService;
 import com.cmu.service.QuestionService;
 import com.cmu.service.UserAnswersService;
@@ -157,24 +158,43 @@ public class AppController {
 	@RequestMapping(value = { "/{type}/speakins" }, method = RequestMethod.GET)
 	public String getSpeakInstructions(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
-		if(type.equalsIgnoreCase("audio"))
-			model.addAttribute("qId", "AUDIO_0");
+		if(type.equalsIgnoreCase("audioaudio"))
+			model.addAttribute("qId", "AUDIOAUDIO_0");
+		if(type.equalsIgnoreCase("audiotext"))
+			model.addAttribute("qId", "AUDIOTEXT_0");
 		if(type.equalsIgnoreCase("text"))
 			model.addAttribute("qId", "1");
 		model.addAttribute("survey", "speaksurvey");
-		model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
+		if(type.equalsIgnoreCase("audioaudio"))
+			model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getSpeakAudioIns()));
+		//if(type.equalsIgnoreCase("audiotext"))
+			//model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getWriteIns()));
+		if(type.equalsIgnoreCase("text"))
+			model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
+		//if(type.equalsIgnoreCase("audioaudio"))
+			//model.addAttribute("speakIns", new String(myList.get(myList.size() - 1).getSpeakAudioIns()));
+		
 		return "instructions";
 	}
 
 	@RequestMapping(value = { "{type}/writeins" }, method = RequestMethod.GET)
 	public String getWriteInstructions(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
-		if(type.equalsIgnoreCase("audio"))
-			model.addAttribute("qId", "AUDIO_0");
+		if(type.equalsIgnoreCase("audioaudio"))
+			model.addAttribute("qId", "AUDIOAUDIO_0");
+		if(type.equalsIgnoreCase("audiotext"))
+			model.addAttribute("qId", "AUDIOTEXT_0");
 		if(type.equalsIgnoreCase("text"))
 			model.addAttribute("qId", "1");
 		model.addAttribute("survey", "writesurvey");
-		model.addAttribute("writeIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
+		//model.addAttribute("writeIns", new String(myList.get(myList.size() - 1).getSpeakIns()));
+		
+		if(type.equalsIgnoreCase("audiotext"))
+			model.addAttribute("writeIns", new String(myList.get(myList.size() - 1).getWriteAudioIns()));
+		if(type.equalsIgnoreCase("text"))
+			model.addAttribute("writeIns", new String(myList.get(myList.size() - 1).getWriteIns()));
+		
+		
 		return "instructions";
 	}
 	
@@ -326,9 +346,9 @@ public class AppController {
 					} else {
 						userAnsService.saveUserAnswer(ans);
 					}
-					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+					return "redirect:writesurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1]) + 1));
 				} else {
-					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+					return "redirect:writesurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1])));
 				}
 			} catch (Exception ex) {
 				return "redirect:write";
@@ -352,9 +372,9 @@ public class AppController {
 					} else {
 						userAnsService.saveUserAnswer(ans);
 					}
-					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+					return "redirect:writesurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1]) + 1));
 				} else {
-					return "redirect:writesurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+					return "redirect:writesurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1])));
 				}
 			} catch (Exception ex) {
 				return "redirect:write";
@@ -405,9 +425,9 @@ public class AppController {
 				} else {
 					userAnsService.saveUserAnswer(ans);
 				}
-				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+				return "../speaksurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1]) + 1));
 			} else {
-				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+				return "../speaksurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1])));
 			}
 		}
 		else {
@@ -427,9 +447,9 @@ public class AppController {
 				} else {
 					userAnsService.saveUserAnswer(ans);
 				}
-				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1]) + 1));
+				return "../speaksurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1]) + 1));
 			} else {
-				return "../speaksurvey/" + ("AUDIO_"+(Integer.parseInt(sp[1])));
+				return "../speaksurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1])));
 			}
 		}
 	}
@@ -453,7 +473,8 @@ public class AppController {
 	@ResponseBody
 	public String newSpeakingFirstPageText(@RequestParam("speakfirstpage") String speakfirstpage, String writefirstpage,
 			@RequestParam("speakIns") String speakIns, @RequestParam("writeIns") String writeIns,
-			@RequestParam("lastpage") String lastpage, @RequestParam("secondlastpage") String secondlastpage) {
+			@RequestParam("lastpage") String lastpage, @RequestParam("secondlastpage") String secondlastpage,
+			@RequestParam("speakAudioIns") String speakAudioIns,@RequestParam("writeAudioIns") String writeAudioIns) {
 
 		Admin temp = new Admin();
 		temp.setSpeakfirstpage(speakfirstpage.getBytes());
@@ -462,6 +483,8 @@ public class AppController {
 		temp.setSpeakIns(speakIns.getBytes());
 		temp.setWritefirstpage(writefirstpage.getBytes());
 		temp.setWriteIns(writeIns.getBytes());
+		temp.setWriteAudioIns(writeAudioIns.getBytes());
+		temp.setSpeakAudioIns(speakAudioIns.getBytes());
 		adminService.saveAdmin(temp);
 		return "success";
 	}
@@ -479,6 +502,14 @@ public class AppController {
 			adminPojo.setWritefirstpage(new String(temp.getWritefirstpage()));
 			adminPojo.setWriteIns(new String(temp.getWriteIns()));
 			adminPojo.setSecondlastpage(new String(temp.getSecondlastpage()));
+			if(temp.getSpeakAudioIns()==null)
+				adminPojo.setSpeakAudioIns("");
+			else
+				adminPojo.setSpeakAudioIns(new String(temp.getSpeakAudioIns()));
+			if(temp.getWriteAudioIns()==null)
+				adminPojo.setWriteAudioIns("");
+			else
+				adminPojo.setWriteAudioIns(new String(temp.getWriteAudioIns()));
 		}
 		return new Gson().toJson(adminPojo);
 
@@ -502,13 +533,13 @@ public class AppController {
 	public String manageAudioForTextquestions(ModelMap model) {
 		List<QuestionAudioForText> myList = questionService.findAllAudioForTextQuestions();
 		model.addAttribute("managequestions", myList);
-		return "manageaudioquestions";
+		return "manageaudiofortextquestions";
 	}
 	@RequestMapping(value = { "/manageaudioforaudioquestions" }, method = RequestMethod.GET)
 	public String manageAudioForAudioquestions(ModelMap model) {
 		List<QuestionAudioForAudio> myList = questionService.findAllAudioForAudioQuestions();
 		model.addAttribute("managequestions", myList);
-		return "manageaudioquestions";
+		return "manageaudioforaudioquestions";
 	}
 
 	@RequestMapping(value = { "/newquestionastext" }, method = RequestMethod.POST)
@@ -636,12 +667,12 @@ public class AppController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = { "/{type}/deleteaudiofortext/{qId}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/{type}/delete/{qId}" }, method = RequestMethod.GET)
 	public String deleteQuestion(@PathVariable("qId") String qId, ModelMap model, @PathVariable("type") String type) {
 		if (type.equalsIgnoreCase("text")) {
 			questionService.deleteTextById(Integer.parseInt(qId));
 		}else if (type.equalsIgnoreCase("audiotext")) {
-			questionService.deleteTextById(Integer.parseInt(qId));
+			questionService.deleteAudioForTextById(qId);
 		}  
 		else {
 			questionService.deleteAudioForAudioById(qId);
@@ -676,6 +707,32 @@ public class AppController {
 					q.setQtype(new String(q.getQue()));
 				}
 				ret.add(q);
+			}
+		}
+		model.addAttribute("answers", ret);
+		model.addAttribute("type", qType);
+		return "useranswers";
+	}
+
+	@RequestMapping(value = { "/{type}/getallanswers" }, method = RequestMethod.GET)
+	public String getAllResults(ModelMap model,@PathVariable("type") String qType) {
+		List<UserAnswers> ans = userAnsService.findUserAnswerByQuestionType(qType);
+		List<UserAnswersPojo> ret = new LinkedList<UserAnswersPojo>();
+		for (UserAnswers q : ans) {
+			//System.out.println(q.getQtype());
+			UserAnswersPojo p=new UserAnswersPojo();
+			
+			if (q.getQtype().equalsIgnoreCase(qType)) {
+				User u=userService.findByuser(q.getUserId());
+				if (q.getType().equalsIgnoreCase("text")) {
+					q.setType(new String(q.getReply()));
+				}
+				if (q.getQtype().equalsIgnoreCase("text")) {
+					q.setQtype(new String(q.getQue()));
+				}
+				p.setAns(q);
+				p.setUser(u);
+				ret.add(p);
 			}
 		}
 		model.addAttribute("answers", ret);

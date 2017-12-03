@@ -16,7 +16,7 @@ public class CustomAudioTextIdGenerator implements IdentifierGenerator {
 	public Serializable generate(SessionImplementor session, Object object)
             throws HibernateException {
 
-        String prefix = "AUDIO_";
+        String prefix = "AUDIOTEXT_";
         Connection connection = session.connection();
         PreparedStatement ps=null;
         try {

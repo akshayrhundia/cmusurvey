@@ -7,6 +7,7 @@ import com.cmu.model.UserAnswers;
 
 public interface UserAnswersService {
 	
+	List<UserAnswers> findUserAnswerByQuestionType(String type);
 	
 	UserAnswers findUserAnswerByQuestionId(int id,String userId);
 	

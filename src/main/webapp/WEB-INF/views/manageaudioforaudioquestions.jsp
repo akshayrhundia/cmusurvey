@@ -31,10 +31,22 @@
 <link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
 <link href="<c:url value='/static/css/editor.css' />" rel="stylesheet"></link>
 <script src="<c:url value='/static/js/editor.js' />"></script>
+<script>
+	$('#loading').hide();
+	function deleteQuestion(id){
+		$('#loading').show();
+		$.get("audioaudio/delete/"+id, function(data, rstatus) {
+		   		    //alert("Data: " + data + "\nStatus: " + status);
+			        $('#loading').hide();
+			        location.reload();
+			    }
+		);
+	}
+
+	</script>
 </head>
 
 <body>
-<div class="loading" id="loading">Loading&#8230;</div>
 	<nav class="navbar navbar-inverse">
 		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->
@@ -52,6 +64,7 @@
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="admin">Home</a></li>
 					<li><a href="newquestion">Add Question</a></li>
+
 					<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage Question
         		<span class="caret"></span></a>
@@ -83,7 +96,7 @@
 			<div class="panel panel-default">
 				<!-- Default panel contents -->
 				<div class="panel-heading">
-					<span class="lead">List of Text Questions </span>
+					<span class="lead">List of Audio Questions </span>
 				</div>
 				<div class="tablecontainer">
 					<table class="table table-hover">
@@ -93,7 +106,6 @@
 								<th>Question type</th>
 								<th>Question</th>
 								<th></th>
-								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -101,11 +113,12 @@
 								varStatus="counter">
 								<tr>
 									<td>${doc.id}</td>
-									<td>Text</td>
-									<td contenteditable='true' id='${doc.id}'>${doc.title}</td>
-									<td><button onclick="saveQuestion(${doc.id})" class="btn btn-primary">
-					Save</button></td>
-									<td><button onclick="deleteQuestion(${doc.id})" class="btn btn-primary">
+									<td>Audio</td>
+
+									<td><audio controls><source src="getQuestionAudioForAudioFile/${doc.id}" type="audio/wav" />
+									</audio>
+									</td>
+									<td><button onclick="deleteQuestion('${doc.id}')" class="btn btn-primary">
 					Delete</button></td>
 								</tr>
 							</c:forEach>
@@ -115,33 +128,6 @@
 			</div>
 		</div>
 	</div>
-	<script>
-	$('#loading').hide();
-	function deleteQuestion(id){
-		$('#loading').show();
-		$.get("text/delete/"+id, function(data, rstatus) {
-		   		    //alert("Data: " + data + "\nStatus: " + status);
-			        $('#loading').hide();
-			        location.reload();
-			    }
-		);
-	}
-	function saveQuestion(id){
-		dtitle=document.getElementById ( id ).innerText
-		//alert(dtitle);
-		$('#loading').show();
-		
-		$.post("text/updatequestiontitle/"+id, {
-			 title:dtitle
-			},
-			    function(data, status){
-			        //alert("Data: " + data + "\nStatus: " + status);
-			        $('#loading').hide();
-			        location.reload();
-			});
-	}
-
-	</script>
-
+	
 </body>
 </html>

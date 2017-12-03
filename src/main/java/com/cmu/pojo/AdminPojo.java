@@ -58,6 +58,20 @@ public class AdminPojo {
 	String writefirstpage;
 	String speakIns;
 	String writeIns;
+	String speakAudioIns;
+	String writeAudioIns;
+	public String getSpeakAudioIns() {
+		return speakAudioIns;
+	}
+	public void setSpeakAudioIns(String speakAudioIns) {
+		this.speakAudioIns = speakAudioIns;
+	}
+	public String getWriteAudioIns() {
+		return writeAudioIns;
+	}
+	public void setWriteAudioIns(String writeAudioIns) {
+		this.writeAudioIns = writeAudioIns;
+	}
 	String lastpage;
 	String secondlastpage;
 	public String getSecondlastpage() {

@@ -50,8 +50,11 @@
 							<span id="qid">
 							
 							<c:choose>
-								<c:when test = "${titletype == 'audio'}">
-									<audio controls autoplay class="audio"><source src="../../getQuestionFile/${question.id}" type="audio/wav" /></audio>
+								<c:when test = "${titletype == 'audiotext'}">
+									<audio controls autoplay class="audio"><source src="../../getQuestionAudioForTextFile/${question.id}" type="audio/wav" /></audio>
+      							</c:when>
+      							<c:when test = "${titletype == 'audioaudio'}">
+									<audio controls autoplay class="audio"><source src="../../getQuestionAudioForAudioFile/${question.id}" type="audio/wav" /></audio>
       							</c:when>
       							
       							<c:otherwise>

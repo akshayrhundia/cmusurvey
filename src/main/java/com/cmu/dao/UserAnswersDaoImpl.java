@@ -56,6 +56,16 @@ public class UserAnswersDaoImpl extends AbstractDao<Integer, UserAnswers> implem
 		
 	}
 
+	@Override
+	public List<UserAnswers> findAllUserAnswersByQuestionType(String type) {
+		Criteria criteria = createEntityCriteria();
+		criteria.add(Restrictions.eq("qtype", type));
+		//criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
+		List<UserAnswers> UserAnswerss = (List<UserAnswers>) criteria.list();
+		
+		return UserAnswerss;
+	}
+
 	
 	/*public void deleteBySSO(String sso) {
 		Criteria crit = createEntityCriteria();
