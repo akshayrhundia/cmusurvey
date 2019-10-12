@@ -33,7 +33,7 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
-<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
+<link href="<c:url value='../../static/css/style.css' />" rel="stylesheet"></link>
 <link href="" rel="stylesheet"></link>
 
 
@@ -98,7 +98,8 @@
 								
 								<input required
 									type="hidden" id="qId" name="qId" class="form-control input-lg" value="${question.id}">
-															
+								<input required
+									type="hidden" id="user" name="user" class="form-control input-lg" value="${username}">							
 								<input required
 									type="text" id="reply" name="reply" class="form-control input-lg"
 									placeholder="Answer">

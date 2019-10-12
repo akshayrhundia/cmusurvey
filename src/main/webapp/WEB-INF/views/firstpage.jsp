@@ -32,9 +32,9 @@
 <!-- <script src="/resources/js/recorderWorker.js;jsessionid=DE7F829B064E471DDC0E6B26866AF7D0"></script>
 <script src="/resources/js/recorderWorker.js;jsessionid=DE7F829B064E471DDC0E6B26866AF7D0"></script>
 <script src="/resources/js/recorder.js;jsessionid=DE7F829B064E471DDC0E6B26866AF7D0"></script>-->
-<link href="<c:url value='/static/css/bootstrap.css' />"
+<link href="<c:url value='../static/css/bootstrap.css' />"
 	rel="stylesheet"></link>
-<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='../static/css/app.css' />" rel="stylesheet"></link>
 
 </head>
 <body style="height: 100%;">
@@ -84,7 +84,7 @@
 
 														<div class="panel-body">
 
-															<form:form method="POST" modelAttribute="user"
+															<form:form method="POST" modelAttribute="user" action="#"
 																class="form-horizontal">
 																<div class="row">
 																	<div class="form-group col-md-12">

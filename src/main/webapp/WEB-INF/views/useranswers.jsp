@@ -120,10 +120,10 @@
 						
 							<c:choose>
 								<c:when test = "${type == 'audiotext'}">
-									<td><audio controls><source src="../../getQuestionAudioForTextFile/AUDIOTEXT_${res.ans.qId}" type="audio/wav" /></td>
+									<td><audio controls><source src="../getQuestionAudioForTextFile/AUDIOTEXT_${res.ans.qId}" type="audio/wav" /></td>
       							</c:when>
       							<c:when test = "${type == 'audiotext'}">
-									<td><audio controls><source src="../../getQuestionAudioForAudioFile/AUDIOAUDIO_${res.ans.qId}" type="audio/wav" /></td>
+									<td><audio controls><source src="../getQuestionAudioForAudioFile/AUDIOAUDIO_${res.ans.qId}" type="audio/wav" /></td>
       							</c:when>
       							<c:otherwise>
       								<td>${res.ans.qtype}</td>

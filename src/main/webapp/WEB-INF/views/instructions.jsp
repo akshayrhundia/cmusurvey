@@ -29,7 +29,7 @@
 
 <!-- <link href="/resources/css/style.css" rel="stylesheet" />
 <script src="/resources/js/ins.js"></script> -->
-<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='../static/css/app.css' />" rel="stylesheet"></link>
 
 </head>
 <body>
@@ -62,11 +62,9 @@
 		<form action="${survey}/${qId}" method="get">
 		<input type="hidden" name="user" id="user"
 			class="form-control input-lg" placeholder="Username"
-			value="${username}"/> 
+			value="${username}"/>  
 			<input class="btn btn-primary btn-block" type="submit" value="Start" />
 		</form>
-
-
 	</div>
 	<!-- <script>
 		var mainv = document.getElementById("test");

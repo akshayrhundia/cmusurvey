@@ -24,13 +24,13 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-<link href="<c:url value='/static/css/bootstrap.css' />"
+<link href="<c:url value='static/css/bootstrap.css' />"
 	rel="stylesheet"></link>
-<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
-<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
-<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
-<link href="<c:url value='/static/css/editor.css' />" rel="stylesheet"></link>
-<script src="<c:url value='/static/js/editor.js' />"></script>
+<link href="<c:url value='static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='static/css/style.css' />" rel="stylesheet"></link>
+<link href="<c:url value='static/css/editor.css' />" rel="stylesheet"></link>
+<script src="<c:url value='static/js/editor.js' />"></script>
 </head>
 
 <body>

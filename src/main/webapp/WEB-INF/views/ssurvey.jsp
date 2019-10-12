@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+	pageEncoding="ISO-8859-1" session="true"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <html>
 
@@ -33,12 +33,12 @@
 
 <!-- <script src="<c:url value='/static/js/writesurvey.js' />"></script> -->
 
-<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
+<link href="<c:url value='../../static/css/style.css' />" rel="stylesheet"></link>
 <link href="" rel="stylesheet"></link>
 
 
 
-<script src="<c:url value='/static/dist/recorder.js' />"></script>
+<script src="<c:url value='../../static/dist/recorder.js' />"></script>
 
 
 
@@ -104,7 +104,7 @@
 															
 								<button onclick="startRecording(this);">Record Answer</button>
 								<button onclick="stopRecording(this);" disabled>stop</button>
-	  							<button  onclick="reset(this);">reset</button>
+	  							<!-- <button  onclick="reset(this);">reset</button> -->
 	  							<h4>Recorded Answer</h4>
 	  							<ul id="recordingslist"></ul>
 									
@@ -112,7 +112,7 @@
 						</div>
 					</div>
 					<div class="modal-footer text-muted">
-						<input type="submit" value="Next" class="btn btn-default" onclick="saveMyAudio()" />
+						<input type="submit" value="Next" class="btn btn-default" onclick="saveMyAudio('${username}')" />
 					</div>
 					<!--</form:form>-->
 				</div>
@@ -209,7 +209,7 @@ var gBlob=null;
     });
   };
   
-  function saveMyAudio(){
+  function saveMyAudio(user){
 	  if (!recordingslist.hasChildNodes()) {
 		  alert("Please record your answer");
 		  return;
@@ -225,6 +225,7 @@ var gBlob=null;
 	     
 	  fd.append('qId', qId.value);
 	  fd.append('reply', gBlob);
+	  fd.append('user', user);
       $.ajax({
           type: 'POST',
           url: '../savespeakans',

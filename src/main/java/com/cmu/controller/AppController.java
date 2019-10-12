@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,14 +89,27 @@ public class AppController {
 		binder.setValidator(fileValidator);
 	}
 
+	@RequestMapping(value = { "/echo" }, method = RequestMethod.GET)
+	@ResponseBody
+	public String getAllAdmin() {
+		
+		return "All is well";
+	}
+	
 	@RequestMapping(value = { "/{type}/speak" }, method = RequestMethod.GET)
 	public String getAllAdmin(ModelMap model,@PathVariable("type")  String type) {
 		List<Admin> myList = adminService.findAllAdmins();
-		model.addAttribute("speakfirstpage", new String(myList.get(myList.size() - 1).getSpeakfirstpage()));
+		if(myList.size()!=0) {
+			model.addAttribute("speakfirstpage", new String(myList.get(myList.size() - 1).getSpeakfirstpage()));
+		}else{
+			model.addAttribute("speakfirstpage", "");
+		}
 		User user = new User();
 		model.addAttribute("user", user);
 		return "firstpage";
 	}
+	
+	
 
 	@RequestMapping(value = { "/{type}/write" }, method = RequestMethod.GET)
 	public String getFirstWritePage(ModelMap model,@PathVariable("type")  String type) {
@@ -113,22 +128,25 @@ public class AppController {
 	public String saveUserRegistration(@Valid User user, BindingResult result, ModelMap model,
 			HttpServletRequest request,@PathVariable("type")  String type) {
 
+		System.out.println(request.getContextPath());
 		if (result.hasErrors()) {
 			return "speak";
 		}
 
 		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
 			model.addAttribute("user", user);
+			System.out.println("**********saving username:*******"+user.getUserId());
 			request.getSession().setAttribute("username", user.getUserId());
-			return "redirect:speakins";
+			return "redirect:../../surveys/cmu/"+type+"/speakins";
 		}
 
 		userService.saveUser(user);
 
 		model.addAttribute("user", user);
+		System.out.println("**********saving username:*******"+user.getUserId());
 		request.getSession().setAttribute("username", user.getUserId());
 		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
-		return "redirect:speakins";
+		return "redirect:../../surveys/cmu/"+type+"/speakins";
 	}
 
 	/**
@@ -145,7 +163,7 @@ public class AppController {
 		if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
 			model.addAttribute("user", user);
 			request.getSession().setAttribute("username", user.getUserId());
-			return "redirect:writeins";
+			return "redirect:../../surveys/cmu/"+type+"/writeins";
 		}
 
 		userService.saveUser(user);
@@ -153,10 +171,12 @@ public class AppController {
 		model.addAttribute("user", user);
 		request.getSession().setAttribute("username", user.getUserId());
 		model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
-		return "redirect:writeins";
+		return "redirect:../../surveys/cmu/"+type+"/writeins";
 	}
 	@RequestMapping(value = { "/{type}/speakins" }, method = RequestMethod.GET)
-	public String getSpeakInstructions(ModelMap model,@PathVariable("type")  String type) {
+	public String getSpeakInstructions( HttpServletRequest request,ModelMap model,@PathVariable("type")  String type) {
+		System.out.println("************");
+		System.out.println("************"+request.getSession().getAttribute("username"));
 		List<Admin> myList = adminService.findAllAdmins();
 		if(type.equalsIgnoreCase("audioaudio"))
 			model.addAttribute("qId", "AUDIOAUDIO_0");
@@ -199,8 +219,9 @@ public class AppController {
 	}
 	
 	@RequestMapping(value = { "{type}/writesurvey/{qId}" }, method = RequestMethod.GET)
-	public String getWritesurvey(@PathVariable("qId") String qId, ModelMap model, @PathVariable("type")  String type) {
+	public String getWritesurvey(@PathVariable("qId") String qId,@RequestParam("user") String username, ModelMap model, @PathVariable("type")  String type) {
 		model.addAttribute("titletype", type);
+		model.addAttribute("username", username);
 		if (type.equalsIgnoreCase("text")) {
 			try {
 				QuestionText que = questionService.findTextById(Integer.parseInt(qId));
@@ -223,6 +244,7 @@ public class AppController {
 				if (que != null) {
 					model.addAttribute("question", que);
 					model.addAttribute("qId", que.getId() + 1);
+					//model.addAttribute("type", type);
 					return "wsurvey";
 				} else {
 					List<Admin> admins = adminService.findAllAdmins();
@@ -252,10 +274,18 @@ public class AppController {
 		}
 	}
 	@RequestMapping(value = { "/{type}/speaksurvey/{qId}" }, method = RequestMethod.GET)
-	public String getSpeakSurvey(@PathVariable("qId") String qId, ModelMap model,@PathVariable("type")  String type) {
+	public String getSpeakSurvey(HttpServletRequest request,@RequestParam("user") String username,@PathVariable("qId") String qId, ModelMap model,@PathVariable("type")  String type) {
+		System.out.println("************");
+		System.out.println("************"+request.getParameter("jsessionid"));
+		HttpSession session = request.getSession();
+		String sessionId = session.getId();
+		System.out.println("************");
+		System.out.println("************"+sessionId);
+		
+		model.addAttribute("username", username);
 		if (type.equalsIgnoreCase("text")) {
 			//String[] sp=qId.split("_");
-			
+		
 		QuestionText que = questionService.findTextById(Integer.parseInt(qId));
 		if (que != null) {
 			model.addAttribute("question", que);
@@ -301,9 +331,9 @@ public class AppController {
 	}
 	
 	@RequestMapping(value = { "/{type}/savewriteans" }, method = RequestMethod.POST)
-	public String saveAnswerText(HttpServletRequest request, @RequestParam("reply") String reply,
+	public String saveAnswerText(HttpServletRequest request, @RequestParam("reply") String reply,@RequestParam("user") String username,
 			@RequestParam("qId") String qId, @PathVariable("type") String qType) {
-
+		System.out.println(username);
 		if (qType.equalsIgnoreCase("text")) {
 			try {
 				QuestionText que = questionService.findTextById(Integer.parseInt(qId));
@@ -313,17 +343,17 @@ public class AppController {
 					ans.setReply(reply.getBytes());
 					ans.setType("text");
 					ans.setQtype(qType);
-					ans.setUserId((String) request.getSession().getAttribute("username"));
+					ans.setUserId(username);
 					ans.setQue(que.getTitle().getBytes());
 					if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(qId),
-							(String) request.getSession().getAttribute("username")) != null) {
+							username) != null) {
 						userAnsService.updateUserAnswer(ans);
 					} else {
 						userAnsService.saveUserAnswer(ans);
 					}
-					return "redirect:writesurvey/" + (Integer.parseInt(qId) + 1);
+					return "redirect:../../surveys/cmu/"+qType+"/writesurvey/" + (Integer.parseInt(qId) + 1)+"?user="+username;
 				} else {
-					return "redirect:writesurvey/" + (qId);
+					return "redirect:../../surveys/cmu/"+qType+"/writesurvey/" + (qId)+"?user="+username;
 				}
 			} catch (Exception ex) {
 				return "redirect:write";
@@ -338,17 +368,17 @@ public class AppController {
 					ans.setReply(reply.getBytes());
 					ans.setType("text");
 					ans.setQtype(qType);
-					ans.setUserId((String) request.getSession().getAttribute("username"));
+					ans.setUserId(username);
 					ans.setQue(que.getTitle());
 					if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
-							(String) request.getSession().getAttribute("username")) != null) {
+							username) != null) {
 						userAnsService.updateUserAnswer(ans);
 					} else {
 						userAnsService.saveUserAnswer(ans);
 					}
-					return "redirect:writesurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1]) + 1));
+					return "redirect:../../surveys/cmu/"+qType+"/writesurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1]) + 1))+"?user="+username;
 				} else {
-					return "redirect:writesurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1])));
+					return "redirect:../../surveys/cmu/"+qType+"/writesurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1])))+"?user="+username;
 				}
 			} catch (Exception ex) {
 				return "redirect:write";
@@ -364,17 +394,17 @@ public class AppController {
 					ans.setReply(reply.getBytes());
 					ans.setType("text");
 					ans.setQtype(qType);
-					ans.setUserId((String) request.getSession().getAttribute("username"));
+					ans.setUserId(username);
 					ans.setQue(que.getTitle());
 					if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
-							(String) request.getSession().getAttribute("username")) != null) {
+							username) != null) {
 						userAnsService.updateUserAnswer(ans);
 					} else {
 						userAnsService.saveUserAnswer(ans);
 					}
-					return "redirect:writesurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1]) + 1));
+					return "redirect:../../surveys/cmu/"+qType+"/writesurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1]) + 1))+"?user="+username;
 				} else {
-					return "redirect:writesurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1])));
+					return "redirect:../../surveys/cmu/"+qType+"/writesurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1])))+"?user="+username;
 				}
 			} catch (Exception ex) {
 				return "redirect:write";
@@ -385,7 +415,9 @@ public class AppController {
 	@ResponseBody
 	@RequestMapping(value = { "/{type}/savespeakans" }, method = RequestMethod.POST)
 	public String saveAnswerAudio(HttpServletRequest request, @RequestParam("reply") MultipartFile reply,
-			@RequestParam("qId") String qId, @PathVariable("type")  String qType) throws IOException {
+			@RequestParam("qId") String qId,@RequestParam("user") String username, @PathVariable("type")  String qType) throws IOException {
+		System.out.println("************");
+		System.out.println("************"+request.getSession().getAttribute("username"));
 		if (qType.equalsIgnoreCase("text")) {
 			TextQuestion temp = new TextQuestion();
 			//String[] sp=qId.split("_");
@@ -396,17 +428,18 @@ public class AppController {
 				ans.setReply(reply.getBytes());
 				ans.setType("Audio");
 				ans.setQtype(qType);
-				ans.setUserId((String) request.getSession().getAttribute("username"));
+				//ans.setUserId((String) request.getSession().getAttribute("username"));
+				ans.setUserId(username);
 				ans.setQue(que.getTitle().getBytes());
 				if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(qId),
-						(String) request.getSession().getAttribute("username")) != null) {
+						username) != null) {
 					userAnsService.updateUserAnswer(ans);
 				} else {
 					userAnsService.saveUserAnswer(ans);
 				}
-				return "../speaksurvey/" + (Integer.parseInt(qId) + 1);
+				return "../speaksurvey/" + (Integer.parseInt(qId) + 1)+"?user="+username;
 			} else {
-				return "../speaksurvey/" + (Integer.parseInt(qId));
+				return "../speaksurvey/" + (Integer.parseInt(qId))+"?user="+username;
 			}
 		} else if(qType.equalsIgnoreCase("audiotext")) {
 			QuestionAudioForText que = questionService.findAudioForTextById(qId);
@@ -417,17 +450,18 @@ public class AppController {
 				ans.setReply(reply.getBytes());
 				ans.setType("Audio");
 				ans.setQtype(qType);
-				ans.setUserId((String) request.getSession().getAttribute("username"));
+				//ans.setUserId((String) request.getSession().getAttribute("username"));
+				ans.setUserId(username);
 				ans.setQue(que.getTitle());
 				if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
-						(String) request.getSession().getAttribute("username")) != null) {
+						username) != null) {
 					userAnsService.updateUserAnswer(ans);
 				} else {
 					userAnsService.saveUserAnswer(ans);
 				}
-				return "../speaksurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1]) + 1));
+				return "../speaksurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1]) + 1))+"?user="+username;
 			} else {
-				return "../speaksurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1])));
+				return "../speaksurvey/" + ("AUDIOTEXT_"+(Integer.parseInt(sp[1])))+"?user="+username;
 			}
 		}
 		else {
@@ -439,17 +473,18 @@ public class AppController {
 				ans.setReply(reply.getBytes());
 				ans.setType("Audio");
 				ans.setQtype(qType);
-				ans.setUserId((String) request.getSession().getAttribute("username"));
+				//ans.setUserId((String) request.getSession().getAttribute("username"));
+				ans.setUserId(username);
 				ans.setQue(que.getTitle());
 				if (userAnsService.findUserAnswerByQuestionId(Integer.parseInt(sp[1]),
-						(String) request.getSession().getAttribute("username")) != null) {
+						username) != null) {
 					userAnsService.updateUserAnswer(ans);
 				} else {
 					userAnsService.saveUserAnswer(ans);
 				}
-				return "../speaksurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1]) + 1));
+				return "../speaksurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1]) + 1))+"?user="+username;
 			} else {
-				return "../speaksurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1])));
+				return "../speaksurvey/" + ("AUDIOAUDIO_"+(Integer.parseInt(sp[1])))+"?user="+username;
 			}
 		}
 	}

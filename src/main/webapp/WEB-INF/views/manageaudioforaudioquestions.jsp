@@ -26,11 +26,11 @@
 	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link href="<c:url value='/static/css/bootstrap.css' />"
 	rel="stylesheet"></link>
-<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
-<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
-<link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
-<link href="<c:url value='/static/css/editor.css' />" rel="stylesheet"></link>
-<script src="<c:url value='/static/js/editor.js' />"></script>
+<link href="<c:url value='static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='static/css/app.css' />" rel="stylesheet"></link>
+<link href="<c:url value='static/css/style.css' />" rel="stylesheet"></link>
+<link href="<c:url value='static/css/editor.css' />" rel="stylesheet"></link>
+<script src="<c:url value='static/js/editor.js' />"></script>
 <script>
 	$('#loading').hide();
 	function deleteQuestion(id){
