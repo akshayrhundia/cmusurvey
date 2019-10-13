@@ -4,25 +4,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class FileBucket {
 
-	MultipartFile file;
-	
-	String description;
+  MultipartFile file;
 
-	public MultipartFile getFile() {
-		return file;
-	}
+  String description;
 
-	public void setFile(MultipartFile file) {
-		this.file = file;
-	}
+  public MultipartFile getFile() {
+    return file;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public void setFile(MultipartFile file) {
+    this.file = file;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
 }

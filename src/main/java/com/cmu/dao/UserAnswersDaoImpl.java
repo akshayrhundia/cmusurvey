@@ -1,20 +1,23 @@
 package com.cmu.dao;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
-
 import com.cmu.model.UserAnswers;
-
-
+import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository("UserAnswersDao")
 public class UserAnswersDaoImpl extends AbstractDao<Integer, UserAnswers> implements UserAnswersDao {
 
-	
+  @Autowired
+  SessionFactory sessionFactory;
+
 	/*public UserAnswers findBySSO(String sso) {
 		System.out.println("SSO : "+sso);
 		Criteria crit = createEntityCriteria();
@@ -23,48 +26,52 @@ public class UserAnswersDaoImpl extends AbstractDao<Integer, UserAnswers> implem
 		return UserAnswers;
 	}*/
 
-	@SuppressWarnings("unchecked")
-	public List<UserAnswers> findAllUserAnswers(String userId) {
-		Criteria criteria = createEntityCriteria();
-		criteria.add(Restrictions.eq("userId", userId));
-		//criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<UserAnswers> UserAnswerss = (List<UserAnswers>) criteria.list();
-		
-		return UserAnswerss;
-	}
+  @SuppressWarnings("unchecked")
+  public List<UserAnswers> findAllUserAnswers(String userId) {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<UserAnswers> cr = cb.createQuery(UserAnswers.class);
+    Root<UserAnswers> root = cr.from(UserAnswers.class);
+    cr.select(root).where(cb.equal(root.get("userId"), userId));
+    Query<UserAnswers> query = session.createQuery(cr);
+    return query.getResultList();
+  }
 
-	public void save(UserAnswers UserAnswers) {
-		persist(UserAnswers);
-	}
+  public void save(UserAnswers UserAnswers) {
+    persist(UserAnswers);
+  }
 
-	@Override
-	public UserAnswers findUserAnswerByQuestionId(int qId, String userId) {
-		Criteria crit = createEntityCriteria();
-		crit.add(Restrictions.eq("qId", qId));
-		crit.add(Restrictions.eq("userId", userId));
-		UserAnswers UserAnswers = (UserAnswers)crit.uniqueResult();
-		return UserAnswers;
-	}
+  public UserAnswers findUserAnswerByQuestionId(int qId, String userId) {
 
-	@Override
-	public void deleteUserAnswerById(Integer qId, String userId) {
-		Criteria crit = createEntityCriteria();
-		crit.add(Restrictions.eq("qId", qId));
-		crit.add(Restrictions.eq("userId", userId));
-		UserAnswers UserAnswers = (UserAnswers)crit.uniqueResult();
-		delete(UserAnswers);
-		
-	}
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<UserAnswers> cr = cb.createQuery(UserAnswers.class);
+    Root<UserAnswers> root = cr.from(UserAnswers.class);
 
-	@Override
-	public List<UserAnswers> findAllUserAnswersByQuestionType(String type) {
-		Criteria criteria = createEntityCriteria();
-		criteria.add(Restrictions.eq("qtype", type));
-		//criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<UserAnswers> UserAnswerss = (List<UserAnswers>) criteria.list();
-		
-		return UserAnswerss;
-	}
+    Predicate[] predicates = new Predicate[2];
+    predicates[0] = cb.equal(root.get("userId"), userId);
+    predicates[1] = cb.equal(root.get("qId"), qId);
+    cr.select(root).where(predicates);
+    Query<UserAnswers> query = session.createQuery(cr);
+    return query.uniqueResult();
+  }
+
+  public void deleteUserAnswerById(Integer qId, String userId) {
+    UserAnswers UserAnswers = findUserAnswerByQuestionId(qId, userId);
+    if (UserAnswers != null) {
+      delete(UserAnswers);
+    }
+  }
+
+  public List<UserAnswers> findAllUserAnswersByQuestionType(String type) {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<UserAnswers> cr = cb.createQuery(UserAnswers.class);
+    Root<UserAnswers> root = cr.from(UserAnswers.class);
+    cr.select(root).where(cb.equal(root.get("qtype"), type));
+    Query<UserAnswers> query = session.createQuery(cr);
+    return query.getResultList();
+  }
 
 	
 	/*public void deleteBySSO(String sso) {

@@ -1,24 +1,22 @@
 package com.cmu.dao;
 
+import com.cmu.model.QuestionAudioForAudio;
 import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.cmu.model.QuestionAudioForAudio;
-import com.cmu.model.QuestionAudioForAudio;
-
-
-
 @Repository("questionAudioForAudioDao")
-public class QuestionAudioForAudioDaoImpl extends AbstractDao<String, QuestionAudioForAudio> implements QuestionAudioForAudioDao {
+public class QuestionAudioForAudioDaoImpl extends AbstractDao<String, QuestionAudioForAudio>
+    implements QuestionAudioForAudioDao {
 
-	public QuestionAudioForAudio findById(String id) {
-		QuestionAudioForAudio Question = getByKey(id);
-		return Question;
-	}
+  public QuestionAudioForAudio findById(String id) {
+    QuestionAudioForAudio Question = getByKey(id);
+    return Question;
+  }
 
 	/*public Question findBySSO(String sso) {
 		System.out.println("SSO : "+sso);
@@ -28,24 +26,31 @@ public class QuestionAudioForAudioDaoImpl extends AbstractDao<String, QuestionAu
 		return Question;
 	}*/
 
-	@SuppressWarnings("unchecked")
-	public List<QuestionAudioForAudio> findAllQuestions() {
-		Criteria criteria = createEntityCriteria().addOrder(Order.asc("title"));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<QuestionAudioForAudio> Questions = (List<QuestionAudioForAudio>) criteria.list();
-		
-		return Questions;
-	}
+  public List<QuestionAudioForAudio> findAllQuestions() {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<QuestionAudioForAudio> cr = cb.createQuery(QuestionAudioForAudio.class);
+    Root<QuestionAudioForAudio> root = cr.from(QuestionAudioForAudio.class);
+    cr.select(root).orderBy(cb.asc(root.get("title"))).distinct(true);
+    Query<QuestionAudioForAudio> query = session.createQuery(cr);
+    return query.getResultList();
+  }
 
-	public void save(QuestionAudioForAudio Question) {
-		persist(Question);
-	}
+  public void save(QuestionAudioForAudio Question) {
+    persist(Question);
+  }
 
-	public void deleteById(String id) {
-		Criteria crit = createEntityCriteria();
-		crit.add(Restrictions.eq("id", id));
-		QuestionAudioForAudio Question = (QuestionAudioForAudio)crit.uniqueResult();
-		delete(Question);
-	}
+  public void deleteById(String id) {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<QuestionAudioForAudio> cr = cb.createQuery(QuestionAudioForAudio.class);
+    Root<QuestionAudioForAudio> root = cr.from(QuestionAudioForAudio.class);
+    cr.select(root).where(cb.equal(root.get("id"), id));
+    Query<QuestionAudioForAudio> query = session.createQuery(cr);
+    QuestionAudioForAudio questionAudioForAudio = query.uniqueResult();
+    if (questionAudioForAudio != null) {
+      delete(questionAudioForAudio);
+    }
+  }
 
 }

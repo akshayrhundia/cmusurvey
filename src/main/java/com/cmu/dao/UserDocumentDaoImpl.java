@@ -1,43 +1,50 @@
 package com.cmu.dao;
 
+import com.cmu.model.UserDocument;
 import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.cmu.model.UserDocument;
-
 @Repository("userDocumentDao")
-public class UserDocumentDaoImpl extends AbstractDao<Integer, UserDocument> implements UserDocumentDao{
+public class UserDocumentDaoImpl extends AbstractDao<Integer, UserDocument> implements UserDocumentDao {
 
-	@SuppressWarnings("unchecked")
-	public List<UserDocument> findAll() {
-		Criteria crit = createEntityCriteria();
-		return (List<UserDocument>)crit.list();
-	}
+  @SuppressWarnings("unchecked")
+  public List<UserDocument> findAll() {
 
-	public void save(UserDocument document) {
-		persist(document);
-	}
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<UserDocument> cr = cb.createQuery(UserDocument.class);
+    Query<UserDocument> query = session.createQuery(cr);
+    return query.getResultList();
+  }
 
-	
-	public UserDocument findById(int id) {
-		return getByKey(id);
-	}
+  public void save(UserDocument document) {
+    persist(document);
+  }
 
-	@SuppressWarnings("unchecked")
-	public List<UserDocument> findAllByUserId(int userId){
-		Criteria crit = createEntityCriteria();
-		Criteria userCriteria = crit.createCriteria("user");
-		userCriteria.add(Restrictions.eq("id", userId));
-		return (List<UserDocument>)crit.list();
-	}
+  public UserDocument findById(int id) {
+    return getByKey(id);
+  }
 
-	
-	public void deleteById(int id) {
-		UserDocument document =  getByKey(id);
-		delete(document);
-	}
+  @SuppressWarnings("unchecked")
+  public List<UserDocument> findAllByUserId(int userId) {
+
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<UserDocument> cr = cb.createQuery(UserDocument.class);
+    Root<UserDocument> root = cr.from(UserDocument.class);
+    cr.select(root).where(cb.equal(root.get("id"), userId));
+    Query<UserDocument> query = session.createQuery(cr);
+    return query.getResultList();
+  }
+
+  public void deleteById(int id) {
+    UserDocument document = getByKey(id);
+    delete(document);
+  }
 
 }

@@ -1,23 +1,31 @@
 package com.cmu.dao;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
+import com.cmu.model.CountAudioForAudio;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.cmu.model.CountAudioForAudio;
-
 @Repository("questionCountAudioForAudioDao")
-public class QuestionCountAudioForAudioDaoImpl extends AbstractDao<Integer, CountAudioForAudio> implements QuestionCountAudioForAudioDao {
+public class QuestionCountAudioForAudioDaoImpl extends AbstractDao<Integer, CountAudioForAudio>
+    implements QuestionCountAudioForAudioDao {
 
-	public void save(CountAudioForAudio cnt) {
-		persist(cnt);
-	}
+  public void save(CountAudioForAudio cnt) {
+    persist(cnt);
+  }
 
-	@Override
-	public int getMax() {
-		Criteria criteria = getSession().createCriteria(CountAudioForAudio.class).setProjection(Projections.max("id"));
-		Integer max = (Integer) criteria.uniqueResult();
-		return max;
-	}
+  public int getMax() {
+
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<Integer> cr = cb.createQuery(Integer.class);
+    Root<CountAudioForAudio> root = cr.from(CountAudioForAudio.class);
+    cr.select(cb.max(root.<Integer>get("id")));
+
+    Query<Integer> query = session.createQuery(cr);
+    return query.uniqueResult();
+  }
 
 }

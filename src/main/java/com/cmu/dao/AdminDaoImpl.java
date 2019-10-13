@@ -1,23 +1,23 @@
 package com.cmu.dao;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
-
 import com.cmu.model.Admin;
-
-
+import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository("AdminDao")
 public class AdminDaoImpl extends AbstractDao<Integer, Admin> implements AdminDao {
 
-	public Admin findById(int id) {
-		Admin Admin = getByKey(id);
-		return Admin;
-	}
+  public Admin findById(int id) {
+    Admin Admin = getByKey(id);
+    return Admin;
+  }
 
 	/*public Admin findBySSO(String sso) {
 		System.out.println("SSO : "+sso);
@@ -27,18 +27,21 @@ public class AdminDaoImpl extends AbstractDao<Integer, Admin> implements AdminDa
 		return Admin;
 	}*/
 
-	@SuppressWarnings("unchecked")
-	public List<Admin> findAllAdmins() {
-		Criteria criteria = createEntityCriteria();
-		//criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<Admin> Admins = (List<Admin>) criteria.list();
-		
-		return Admins;
-	}
+  @SuppressWarnings("unchecked")
+  public List<Admin> findAllAdmins() {
 
-	public void save(Admin Admin) {
-		persist(Admin);
-	}
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<Admin> cr = cb.createQuery(Admin.class);
+    Root<Admin> root = cr.from(Admin.class);
+
+    Query<Admin> query = session.createQuery(cr);
+    return query.getResultList();
+  }
+
+  public void save(Admin Admin) {
+    persist(Admin);
+  }
 
 	/*public void deleteBySSO(String sso) {
 		Criteria crit = createEntityCriteria();

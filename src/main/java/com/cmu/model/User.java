@@ -1,83 +1,71 @@
 package com.cmu.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Table(name="APP_USER")
+@Table(name = "APP_USER")
 public class User {
 
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-	@NotEmpty
-	@Column(name="user_ID", unique=true, nullable=false)
-	private String userId;
-	
-	@Column(name="age")
-	private Integer age;
+  @NotEmpty
+  @Column(name = "user_ID", unique = true, nullable = false)
+  private String userId;
 
-	@Column(name="gender")
-	private String gender;
+  @Column(name = "age")
+  private Integer age;
 
-	@Column(name="occupation")
-	private String occupation;
+  @Column(name = "gender")
+  private String gender;
 
-	public Integer getId() {
-		return id;
-	}
+  @Column(name = "occupation")
+  private String occupation;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+  public Integer getId() {
+    return id;
+  }
 
-	public String getUserId() {
-		return userId;
-	}
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+  public String getUserId() {
+    return userId;
+  }
 
-	public Integer getAge() {
-		return age;
-	}
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
 
-	public void setAge(Integer age) {
-		this.age = age;
-	}
+  public Integer getAge() {
+    return age;
+  }
 
-	public String getGender() {
-		return gender;
-	}
+  public void setAge(Integer age) {
+    this.age = age;
+  }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+  public String getGender() {
+    return gender;
+  }
 
-	public String getOccupation() {
-		return occupation;
-	}
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
 
-	public void setOccupation(String occupation) {
-		this.occupation = occupation;
-	}
+  public String getOccupation() {
+    return occupation;
+  }
 
-	
+  public void setOccupation(String occupation) {
+    this.occupation = occupation;
+  }
 
-	
-	
-	
 }

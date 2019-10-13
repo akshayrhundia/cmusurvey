@@ -1,43 +1,32 @@
 package com.cmu.dao;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
-
-import com.cmu.model.CountAudioForText;
-import com.cmu.model.QuestionAudioForText;
 import com.cmu.model.QuestionText;
-
-
+import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
 
 @Repository("questionTextDao")
 public class QuestionTextDaoImpl extends AbstractDao<Integer, QuestionText> implements QuestionTextDao {
 
-	@Override
-	public int getMax() {
-		Criteria criteria = getSession().createCriteria(QuestionText.class).setProjection(Projections.max("id"));
-		Integer max = (Integer) criteria.uniqueResult();
-		return max;
-		/*String maxHql = "Select max(id) FROM question_text";
-        
-        Query maxQuery = getSession().createQuery(maxHql);
-        System.out
-                .println("Maximum salary in list : " + maxQuery.list().get(0));
-        return (Integer) maxQuery.list().get(0);*/
-	}
+  public int getMax() {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<Integer> cr = cb.createQuery(Integer.class);
+    Root<QuestionText> root = cr.from(QuestionText.class);
+    cr.select(cb.max(root.<Integer>get("id")));
 
-	
-	public QuestionText findById(int id) {
-		QuestionText Question = getByKey(id);
-		return Question;
-	}
+    Query<Integer> query = session.createQuery(cr);
+    return query.uniqueResult();
+  }
+
+  public QuestionText findById(int id) {
+    QuestionText Question = getByKey(id);
+    return Question;
+  }
 
 	/*public Question findBySSO(String sso) {
 		System.out.println("SSO : "+sso);
@@ -47,44 +36,53 @@ public class QuestionTextDaoImpl extends AbstractDao<Integer, QuestionText> impl
 		return Question;
 	}*/
 
-	@SuppressWarnings("unchecked")
-	public List<QuestionText> findAllQuestions() {
-		Criteria criteria = createEntityCriteria().addOrder(Order.asc("title"));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
-		List<QuestionText> Questions = (List<QuestionText>) criteria.list();
-		
-		return Questions;
-	}
+  @SuppressWarnings("unchecked")
+  public List<QuestionText> findAllQuestions() {
 
-	public void save(QuestionText Question) {
-		persist(Question);
-	}
-	//public void update(QuestionText Question) {
-		//update(Question);
-	//}
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<QuestionText> cr = cb.createQuery(QuestionText.class);
+    Root<QuestionText> root = cr.from(QuestionText.class);
+    cr.select(root).orderBy(cb.asc(root.get("title"))).distinct(true);
+    Query<QuestionText> query = session.createQuery(cr);
+    return query.getResultList();
+  }
 
-	public void deleteById(int id) {
-		Criteria crit = createEntityCriteria();
-		crit.add(Restrictions.eq("id", id));
-		QuestionText Question = (QuestionText)crit.uniqueResult();
-		delete(Question);
-	}
+  public void save(QuestionText Question) {
+    persist(Question);
+  }
+  //public void update(QuestionText Question) {
+  //update(Question);
+  //}
 
+  public void deleteById(int id) {
 
-	@Override
-	public void updateTitle(QuestionText Question) {
-		Session session=getSession();
-		QuestionText entity = (QuestionText) session.get(QuestionText.class, Question.getId());//findById(Question.getId());
-		session.evict(entity);
-		if(entity!=null){
-			System.out.println(entity.getTitle());
-			System.out.println(Question.getTitle());
-			entity.setTitle(Question.getTitle());
-		}
-		
-		session.saveOrUpdate(entity);
-		//update(Question);
-		
-	}
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<QuestionText> cr = cb.createQuery(QuestionText.class);
+    Root<QuestionText> root = cr.from(QuestionText.class);
+    cr.select(root).where(cb.equal(root.get("id"), id));
+    Query<QuestionText> query = session.createQuery(cr);
+
+    QuestionText Question = query.uniqueResult();
+    if (Question != null) {
+      delete(Question);
+    }
+  }
+
+  public void updateTitle(QuestionText Question) {
+    Session session = getSession();
+    QuestionText entity = session.get(QuestionText.class, Question.getId());//findById(Question.getId());
+    session.evict(entity);
+    if (entity != null) {
+      System.out.println(entity.getTitle());
+      System.out.println(Question.getTitle());
+      entity.setTitle(Question.getTitle());
+    }
+
+    session.saveOrUpdate(entity);
+    //update(Question);
+
+  }
 
 }
