@@ -14,8 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository("userDao")
 public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 
-  @Autowired
-  SessionFactory sessionFactory;
+ 
 
   public User findById(int id) {
     User user = getByKey(id);
@@ -23,7 +22,7 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
   }
 
   public User findByuser(String usr) {
-    Session session = sessionFactory.openSession();
+    Session session = getSession();
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<User> cr = cb.createQuery(User.class);
     Root<User> root = cr.from(User.class);
@@ -37,7 +36,7 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
   @SuppressWarnings("unchecked")
   public List<User> findAllUsers() {
 
-    Session session = sessionFactory.openSession();
+    Session session = getSession();
     CriteriaBuilder cb = session.getCriteriaBuilder();
     CriteriaQuery<User> cr = cb.createQuery(User.class);
     Root<User> root = cr.from(User.class);

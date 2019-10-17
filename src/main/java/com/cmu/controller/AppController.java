@@ -99,9 +99,6 @@ public class AppController {
   @RequestMapping(value = {"/{type}/write"}, method = RequestMethod.GET)
   public String getFirstWritePage(ModelMap model, @PathVariable("type") String type) {
     List<Admin> myList = adminService.findAllAdmins();
-    for (Admin m : myList) {
-      System.out.println(m.getWritefirstpage());
-    }
     model.addAttribute("writefirstpage", new String(myList.get(myList.size() - 1).getWritefirstpage()));
     User user = new User();
     model.addAttribute("user", user);
@@ -113,19 +110,19 @@ public class AppController {
    * the user input
    */
   @RequestMapping(value = {"/{type}/speak"}, method = RequestMethod.POST)
-  public String saveUserRegistration(@Valid User user, BindingResult result, ModelMap model,
+  public RedirectView saveUserRegistration(@Valid User user, BindingResult result, ModelMap model,
                                      HttpServletRequest request, @PathVariable("type") String type) {
 
     System.out.println(request.getContextPath());
     if (result.hasErrors()) {
-      return "speak";
+      return new RedirectView("speak");
     }
 
     if (!userService.isUseruserUnique(user.getId(), user.getUserId())) {
       model.addAttribute("user", user);
       System.out.println("**********saving username:*******" + user.getUserId());
       request.getSession().setAttribute("username", user.getUserId());
-      return "redirect:../../surveys/cmu/" + type + "/speakins";
+      return new RedirectView("../"+type + "/speakins");
     }
 
     userService.saveUser(user);
@@ -134,7 +131,7 @@ public class AppController {
     System.out.println("**********saving username:*******" + user.getUserId());
     request.getSession().setAttribute("username", user.getUserId());
     model.addAttribute("success", "User " + user.getUserId() + " registered successfully");
-    return "redirect:../../surveys/cmu/" + type + "/speakins";
+    return new RedirectView("../"+type + "/speakins");
   }
 
   /**
@@ -170,10 +167,10 @@ public class AppController {
     System.out.println("************" + request.getSession().getAttribute("username"));
     List<Admin> myList = adminService.findAllAdmins();
     if (type.equalsIgnoreCase("audioaudio")) {
-      model.addAttribute("qId", "AUDIOAUDIO_0");
+      model.addAttribute("qId", "AUDIOAUDIO_05");
     }
     if (type.equalsIgnoreCase("audiotext")) {
-      model.addAttribute("qId", "AUDIOTEXT_0");
+      model.addAttribute("qId", "AUDIOTEXT_01");
     }
     if (type.equalsIgnoreCase("text")) {
       model.addAttribute("qId", "1");
@@ -197,10 +194,10 @@ public class AppController {
   public String getWriteInstructions(ModelMap model, String type) {
     List<Admin> myList = adminService.findAllAdmins();
     if (type.equalsIgnoreCase("audioaudio")) {
-      model.addAttribute("qId", "AUDIOAUDIO_0");
+      model.addAttribute("qId", "AUDIOAUDIO_01");
     }
     if (type.equalsIgnoreCase("audiotext")) {
-      model.addAttribute("qId", "AUDIOTEXT_0");
+      model.addAttribute("qId", "AUDIOTEXT_01");
     }
     if (type.equalsIgnoreCase("text")) {
       model.addAttribute("qId", "1");
@@ -384,13 +381,9 @@ public class AppController {
           } else {
             userAnsService.saveUserAnswer(ans);
           }
-          return new RedirectView(qType + "/writesurvey/" + ("AUDIOTEXT_" + (Integer.parseInt(sp[1])
-                                                                             + 1)) + "?user=" + username);
+          return new RedirectView("writesurvey/AUDIOTEXT_0" + (Integer.parseInt(sp[1])+ 1) + "?user=" + username);
         } else {
-          return new RedirectView(
-              qType
-              + "/writesurvey/"
-              + ("AUDIOTEXT_" + (Integer.parseInt(sp[1])))
+          return new RedirectView("writesurvey/AUDIOTEXT_0" + (Integer.parseInt(sp[1]))
               + "?user="
               + username);
         }
@@ -415,18 +408,14 @@ public class AppController {
           } else {
             userAnsService.saveUserAnswer(ans);
           }
-          return new RedirectView(
-              qType
-              + "/writesurvey/"
-              + ("AUDIOAUDIO_" + (Integer.parseInt(sp[1])
+          return new RedirectView("writesurvey/"
+              + ("AUDIOAUDIO_0" + (Integer.parseInt(sp[1])
                                   + 1))
               + "?user="
               + username);
         } else {
-          return new RedirectView(
-              qType
-              + "/writesurvey/"
-              + ("AUDIOAUDIO_" + (Integer.parseInt(sp[1])))
+          return new RedirectView("/writesurvey/"
+              + ("AUDIOAUDIO_0" + (Integer.parseInt(sp[1])))
               + "?user="
               + username);
         }
@@ -506,9 +495,9 @@ public class AppController {
         } else {
           userAnsService.saveUserAnswer(ans);
         }
-        return "../speaksurvey/" + ("AUDIOAUDIO_" + (Integer.parseInt(sp[1]) + 1)) + "?user=" + username;
+        return "../speaksurvey/" + ("AUDIOAUDIO_0" + (Integer.parseInt(sp[1]) + 1)) + "?user=" + username;
       } else {
-        return "../speaksurvey/" + ("AUDIOAUDIO_" + (Integer.parseInt(sp[1]))) + "?user=" + username;
+        return "../speaksurvey/" + ("AUDIOAUDIO_0" + (Integer.parseInt(sp[1]))) + "?user=" + username;
       }
     }
   }
@@ -711,6 +700,7 @@ public class AppController {
     response.setHeader("Content-Disposition", "attachment; filename=\"" + "que.wav" + "\"");
     try {
       QuestionAudioForText myQue = questionService.findAudioForTextById(id);
+      System.out.println("==========myQue========:"+myQue.getId());
       //System.out.println(myQue.getTitle().length);
       response.getOutputStream().write(myQue.getTitle());
 

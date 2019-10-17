@@ -1,5 +1,6 @@
 package com.cmu.configuration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.MessageSource;
@@ -7,8 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -24,10 +27,12 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = "com.cmu")
 public class HelloWorldConfiguration implements WebMvcConfigurer {
 
-  @Bean(name = "multipartResolver")
-  public StandardServletMultipartResolver resolver() {
-    return new StandardServletMultipartResolver();
-  }
+	@Bean(name = "multipartResolver")
+	public CommonsMultipartResolver multipartResolver() throws IOException {
+	    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+	    multipartResolver.setUploadTempDir(new FileSystemResource("/tmp"));
+	    return multipartResolver;
+	}
 
   /**
    * Configure ViewResolvers to deliver preferred views.
@@ -42,6 +47,7 @@ public class HelloWorldConfiguration implements WebMvcConfigurer {
 
     return bean;
   }
+ 
 
   /**
    * Configure ResourceHandlers to serve static resources like CSS/ Javascript etc...

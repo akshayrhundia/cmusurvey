@@ -15,8 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository("UserAnswersDao")
 public class UserAnswersDaoImpl extends AbstractDao<Integer, UserAnswers> implements UserAnswersDao {
 
-  @Autowired
-  SessionFactory sessionFactory;
+
 
 	/*public UserAnswers findBySSO(String sso) {
 		System.out.println("SSO : "+sso);

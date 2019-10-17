@@ -86,20 +86,25 @@ public class QuestionServiceImpl implements QuestionService{
 	}
 
 	public QuestionAudioForText findAudioForTextById(String id) {
-		String[] sp=id.split("_");
-		int cnt=Integer.parseInt(sp[1]);
-		int max=daoCountAudioForText.getMax();
-		QuestionAudioForText ret=null;
-		while(cnt<=max && ret==null){
+		//String[] sp=id.split("_");
+		//int cnt=Integer.parseInt(sp[1]);
+		//int max=daoCountAudioForText.getMax();
+		//System.out.println("==========max========:"+max);
+		//System.out.println("==========id========:"+id);
+		QuestionAudioForText ret=daoAudioForText.findById(id);
+		/*while(cnt<=max && ret==null){
 			id="AUDIOTEXT_"+cnt;
+			System.out.println("==========id========:"+id);
 			ret=daoAudioForText.findById(id);
 			cnt++;
-		}
+		}*/
 		return ret;
 	}
 
 	public QuestionAudioForAudio findAudioForAudioById(String id) {
-		String[] sp=id.split("_");
+		
+		return daoAudioForAudio.findById(id);
+		/*String[] sp=id.split("_");
 		int cnt=Integer.parseInt(sp[1]);
 		int max=daoCountAudioForAudio.getMax();
 		QuestionAudioForAudio ret=null;
@@ -108,7 +113,7 @@ public class QuestionServiceImpl implements QuestionService{
 			ret=daoAudioForAudio.findById(id);
 			cnt++;
 		}
-		return ret;
+		return ret;*/
 	}
 	/*public Question findBySSO(String sso) {
 		Question Question = dao.findBySSO(sso);
