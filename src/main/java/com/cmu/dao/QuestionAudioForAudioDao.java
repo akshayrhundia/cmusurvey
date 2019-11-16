@@ -19,6 +19,7 @@ public interface QuestionAudioForAudioDao {
 	//void deleteBySSO(String sso);
 	
 	List<QuestionAudioForAudio> findAllQuestions();
+	List<String> findAllQid();
 	void deleteById(String id);
 
 }

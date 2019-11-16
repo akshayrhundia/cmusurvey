@@ -12,10 +12,10 @@ import com.cmu.model.UserAnswers;
 
 @Service("UserAnswersService")
 @Transactional
-public class UserAnswersServiceImpl implements UserAnswersService{
+public class UserAnswersServiceImpl implements UserAnswersService {
 
-	@Autowired
-	private UserAnswersDao dao;
+    @Autowired
+    private UserAnswersDao dao;
 
 	
 
@@ -24,17 +24,17 @@ public class UserAnswersServiceImpl implements UserAnswersService{
 		return UserAnswers;
 	}*/
 
-	public void saveUserAnswer(UserAnswers UserAnswers) {
-		dao.save(UserAnswers);
-	}
+    public void saveUserAnswer(UserAnswers UserAnswers) {
+        dao.save(UserAnswers);
+    }
 
-	/*
-	 * Since the method is running with Transaction, No need to call hibernate update explicitly.
-	 * Just fetch the entity from db and update it with proper values within transaction.
-	 * It will be updated in db once transaction ends. 
-	 */
-	public void updateUserAnswer(UserAnswers UserAnswers) {
-		UserAnswers entity = dao.findUserAnswerByQuestionId(UserAnswers.getqId(),UserAnswers.getUserId());
+    /*
+     * Since the method is running with Transaction, No need to call hibernate update explicitly.
+     * Just fetch the entity from db and update it with proper values within transaction.
+     * It will be updated in db once transaction ends.
+     */
+    public void updateUserAnswer(UserAnswers UserAnswers) {
+        UserAnswers entity = dao.findUserAnswerByQuestionId(UserAnswers.getqId(), UserAnswers.getUserId());
 		/*if(entity!=null){
 			entity.setSsoId(UserAnswers.getSsoId());
 			entity.setFirstName(UserAnswers.getFirstName());
@@ -42,37 +42,43 @@ public class UserAnswersServiceImpl implements UserAnswersService{
 			entity.setEmail(UserAnswers.getEmail());
 			entity.setUserAnswersDocuments(UserAnswers.getUserAnswersDocuments());
 		}*/
-	}
+    }
 
 	
 	/*public void deleteUserAnswersBySSO(String sso) {
 		dao.deleteBySSO(sso);
 	}*/
 
-	public List<UserAnswers> findAllUserAnswers(String userId) {
-		return dao.findAllUserAnswers(userId);
-	}
+    public List<UserAnswers> findAllUserAnswers(String userId) {
+        return dao.findAllUserAnswers(userId);
+    }
 
-	@Override
-	public UserAnswers findUserAnswerByQuestionId(int id, String userId) {
-		// TODO Auto-generated method stub
-		return dao.findUserAnswerByQuestionId(id, userId);
-	}
+    @Override
+    public UserAnswers findUserAnswerByQuestionId(int id, String userId) {
+        // TODO Auto-generated method stub
+        return dao.findUserAnswerByQuestionId(id, userId);
+    }
 
-	@Override
-	public void deleteUserAnswerById(Integer qId, String userId) {
-		dao.deleteUserAnswerById(qId, userId);
-		
-	}
+    @Override
+    public void deleteUserAnswerById(Integer qId, String userId) {
+        dao.deleteUserAnswerById(qId, userId);
 
-	@Override
-	public List<UserAnswers> findUserAnswerByQuestionType(String type) {
-		return dao.findAllUserAnswersByQuestionType(type);
-	}
+    }
+
+    @Override
+    public void deleteAllUserAnswersByQuestionType(String qType, String type) {
+        dao.deleteAllUserAnswersByQuestionType(qType, type);
+    }
+
+    @Override
+    public List<UserAnswers> findUserAnswerByQuestionType(String type) {
+        return dao.findAllUserAnswersByQuestionType(type);
+    }
+
 
 	/*public boolean isUserAnswersSSOUnique(Integer id, String sso) {
 		UserAnswers UserAnswers = findBySSO(sso);
 		return ( UserAnswers == null || ((id != null) && (UserAnswers.getId() == id)));
 	}*/
-	
+
 }

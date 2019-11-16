@@ -37,6 +37,17 @@ public class QuestionAudioForTextDaoImpl extends AbstractDao<String, QuestionAud
     return query.getResultList();
   }
 
+  @SuppressWarnings("unchecked")
+  public List<String> findAllQid() {
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<String> cr = cb.createQuery(String.class);
+    Root<QuestionAudioForText> root = cr.from(QuestionAudioForText.class);
+    cr.select(root.<String>get("id")).orderBy(cb.asc(root.get("id"))).distinct(true);
+    Query<String> query = session.createQuery(cr);
+    return query.getResultList();
+  }
+
   public void save(QuestionAudioForText Question) {
     persist(Question);
   }

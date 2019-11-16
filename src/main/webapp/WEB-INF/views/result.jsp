@@ -46,8 +46,7 @@
 				</button>
 				<a class="navbar-brand" href="#">CMU Survey</a>
 			</div>
-
-			<!-- Collect the nav links, forms, and other content for toggling -->
+        	<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="navbar-collapse-4">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="../admin">Home</a></li>
@@ -137,7 +136,10 @@
 
 
 	<script>
-
+function saveMyAudio(qType,type){
+  alert(qType);
+  alert(type);
+}
 </script>
 </body>
 </html>

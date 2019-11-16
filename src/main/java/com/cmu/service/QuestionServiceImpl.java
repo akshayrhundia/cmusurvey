@@ -39,8 +39,8 @@ public class QuestionServiceImpl implements QuestionService{
 	
 
 	public QuestionText findTextById(int id) {
-		//return daoText.findById(id);
-		int max=daoText.getMax();
+		return daoText.findById(id);
+		/*int max=daoText.getMax();
 		QuestionText ret=null;
 		System.out.println("---Enter---"+max);
 		while(id<=max && ret==null){
@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService{
 			System.out.println(id);
 			id++;
 		}
-		return ret;
+		return ret;*/
 	}
 
 	/*public Question findBySSO(String sso) {
@@ -84,6 +84,14 @@ public class QuestionServiceImpl implements QuestionService{
 	public List<QuestionText> findAllTextQuestions() {
 		return daoText.findAllQuestions();
 	}
+
+	public List<Integer> findAllTextQids() {
+		return daoText.findAllQid();
+	}
+	public List<String> findAllAudioForAudioQid() {
+		return daoAudioForAudio.findAllQid();
+	}
+
 
 	public QuestionAudioForText findAudioForTextById(String id) {
 		//String[] sp=id.split("_");
@@ -138,6 +146,10 @@ public class QuestionServiceImpl implements QuestionService{
 
 	public List<QuestionAudioForText> findAllAudioForTextQuestions() {
 		return daoAudioForText.findAllQuestions();
+	}
+
+	public List<String> findAllAudioForTextQids() {
+		return daoAudioForText.findAllQid();
 	}
 
 	public List<QuestionAudioForAudio> findAllAudioForAudioQuestions() {

@@ -65,27 +65,6 @@
       						
 						</h3>
 					</div>
-					<div class="modal-body">
-						<div class="col-xs-3 col-xs-offset-5">
-							<div id="loadbar" style="display: none;">
-								<div class="blockG" id="rotateG_01"></div>
-								<div class="blockG" id="rotateG_02"></div>
-								<div class="blockG" id="rotateG_03"></div>
-								<div class="blockG" id="rotateG_04"></div>
-								<div class="blockG" id="rotateG_05"></div>
-								<div class="blockG" id="rotateG_06"></div>
-								<div class="blockG" id="rotateG_07"></div>
-								<div class="blockG" id="rotateG_08"></div>
-							</div>
-						</div>
-						<div class="quiz" id="quiz" data-toggle="buttons">
-						<c:forEach items="${question.options}" var="option" varStatus="counter">
-								<div class="alert alert-info" role="alert">
-											${option}
-								</div>
-						</c:forEach>
-						</div>
-					</div>
 					<form:form method="POST"  action="../savewriteans" class="form-horizontal">
 					<div class="panel panel-default">
 						<div class="panel-heading clearfix">
@@ -95,7 +74,7 @@
 						<div class="panel-body">
 							<div class="input-group input-group-lg">
 								<span class="input-group-addon">Ans:</span> 
-								
+								<input required type="hidden" id="qIndex" name="qIndex" class="form-control input-lg" value="${qId}">
 								<input required
 									type="hidden" id="qId" name="qId" class="form-control input-lg" value="${question.id}">
 								<input required

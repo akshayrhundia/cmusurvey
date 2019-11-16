@@ -27,10 +27,30 @@
 
 <link href="/resources/css/style.css" rel="stylesheet" />
 
+<script>
 
+$(document).ready(function(){
+	$('#loading').hide();
+	});
+
+function deleteans(qType,type){
+    $('#loading').show();
+    $.ajax({
+            type: 'POST',
+            url: '../deleteallquestionsbytype/'+qType+'/'+type,
+            contentType: false,
+            processData: false
+          }).done(function(data) {
+    	    window.location.reload();
+          }).fail(function() {
+            alert("error");
+          $('#loading').hide();});
+}
+</script>
 
 </head>
 <body>
+<div class="loading" id="loading">Loading&#8230;</div>
 <nav class="navbar navbar-inverse">
 	<div class="container">
 		<!-- Brand and toggle get grouped for better mobile display -->
@@ -95,7 +115,12 @@
 	<div class="generic-container">
 		<div class="panel panel-default">
 			  <!-- Default panel contents -->
-		  	<div class="panel-heading"><span class="lead">Answers </span></div>
+		  	<div class="panel-heading"><span class="lead">Answers
+		  	<input type="submit" value="Delete Audio-Audio" class="btn btn-default" onclick="deleteans('audioaudio','audio')" />
+                        <input type="submit" value="Delete Audio-Text" class="btn btn-default" onclick="deleteans('audiotext','text')" />
+                        <input type="submit" value="Delete Text-Audio" class="btn btn-default" onclick="deleteans('text','audio')" />
+                        <input type="submit" value="Delete Text-Text" class="btn btn-default" onclick="deleteans('text','text')" />
+		  	</span></div>
 		  	<div class="tablecontainer">
 				<table class="table table-hover">
 				<thead>
@@ -149,8 +174,8 @@
 		
 	</div>
 	</div>
-<script>
-
-</script>
+	<script>
+	$("input").click(function(e) { e.preventDefault(); });
+	</script>
 </body>
 </html>

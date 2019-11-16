@@ -21,5 +21,7 @@ public interface QuestionAudioForTextDao {
 	List<QuestionAudioForText> findAllQuestions();
 	void deleteById(String id);
 
+	List<String> findAllQid();
+
 }
 

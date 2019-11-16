@@ -70,27 +70,6 @@
       						
 						</h3>
 					</div>
-					<div class="modal-body">
-						<div class="col-xs-3 col-xs-offset-5">
-							<div id="loadbar" style="display: none;">
-								<div class="blockG" id="rotateG_01"></div>
-								<div class="blockG" id="rotateG_02"></div>
-								<div class="blockG" id="rotateG_03"></div>
-								<div class="blockG" id="rotateG_04"></div>
-								<div class="blockG" id="rotateG_05"></div>
-								<div class="blockG" id="rotateG_06"></div>
-								<div class="blockG" id="rotateG_07"></div>
-								<div class="blockG" id="rotateG_08"></div>
-							</div>
-						</div>
-						<div class="quiz" id="quiz" data-toggle="buttons">
-						<c:forEach items="${question.options}" var="option" varStatus="counter">
-								<div class="alert alert-info" role="alert">
-											${option}
-								</div>
-						</c:forEach>
-						</div>
-					</div>
 					<!--<form:form method="POST"  action="../savespeakans" enctype="multipart/form-data" class="form-horizontal">-->
 					<div class="panel panel-default">
 						<div class="panel-heading clearfix">
@@ -101,8 +80,9 @@
 							<div class="input-group input-group-lg">
 								<input required
 									type="hidden" id="qId" name="qId" class="form-control input-lg" value="${question.id}">
-															
-								<button onclick="startRecording(this);">Record Answer</button>
+								<input required type="hidden" id="qIndex" name="qIndex" class="form-control input-lg" value="${qId}">
+
+								<button onclick="startRecording(this);" style="font-weight: bold;color: red;">Record Answer</button>
 								<button onclick="stopRecording(this);" disabled>stop</button>
 	  							<!-- <button  onclick="reset(this);">reset</button> -->
 	  							<h4>Recorded Answer</h4>
@@ -219,11 +199,14 @@ var gBlob=null;
       var fd = new FormData();
       
       var qId = document.getElementById('qId');
+      var qIndex = document.getElementById('qIndex');
+
 	  //var titleByte=toUTF8Array(title.value);
 	  var opts=[];
 	  opts.push(qId.value);
 	     
 	  fd.append('qId', qId.value);
+	  fd.append('qIndex', qIndex.value);
 	  fd.append('reply', gBlob);
 	  fd.append('user', user);
       $.ajax({

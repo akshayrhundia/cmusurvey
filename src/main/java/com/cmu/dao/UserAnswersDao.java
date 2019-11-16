@@ -19,5 +19,6 @@ public interface UserAnswersDao {
 	
 	List<UserAnswers> findAllUserAnswersByQuestionType(String type);
 
+	public void deleteAllUserAnswersByQuestionType(String qType, String type);
 }
 

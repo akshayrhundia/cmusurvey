@@ -17,6 +17,8 @@ public interface QuestionTextDao {
 	//void deleteBySSO(String sso);
 	
 	List<QuestionText> findAllQuestions();
+
+	List<Integer> findAllQid();
 	
 	public void deleteById(int id);
 	int getMax();

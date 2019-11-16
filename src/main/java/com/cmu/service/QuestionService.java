@@ -20,6 +20,8 @@ public interface QuestionService {
 
 	List<QuestionText> findAllTextQuestions();
 
+	List<Integer> findAllTextQids();
+
 	// boolean isQuestionSSOUnique(Integer id, String sso);
 
 	QuestionAudioForText findAudioForTextById(String id);
@@ -37,7 +39,9 @@ public interface QuestionService {
 	// void deleteQuestionBySSO(String sso);
 
 	List<QuestionAudioForAudio> findAllAudioForAudioQuestions();
+	List<String> findAllAudioForAudioQid();
 	List<QuestionAudioForText> findAllAudioForTextQuestions();
+	List<String> findAllAudioForTextQids();
 
 	void deleteTextById(int id);
 

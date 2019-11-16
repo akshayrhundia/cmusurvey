@@ -48,6 +48,18 @@ public class QuestionTextDaoImpl extends AbstractDao<Integer, QuestionText> impl
     return query.getResultList();
   }
 
+  public List<Integer> findAllQid() {
+
+    Session session = getSession();
+    CriteriaBuilder cb = session.getCriteriaBuilder();
+    CriteriaQuery<Integer> cr = cb.createQuery(Integer.class);
+    Root<QuestionText> root = cr.from(QuestionText.class);
+    cr.select(root.<Integer>get("id")).orderBy(cb.asc(root.get("id"))).distinct(true);
+    Query<Integer> query = session.createQuery(cr);
+    return query.getResultList();
+  }
+
+
   public void save(QuestionText Question) {
     persist(Question);
   }

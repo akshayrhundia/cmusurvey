@@ -100,8 +100,9 @@
 																	<div class="form-group col-md-12">
 																		<label class="col-md-3 control-lable" for="gender">Gender</label>
 																		<div class="col-md-7">
-																			<form:input type="text" path="gender" id="gender"
-																				class="form-control input-sm" />
+																			<input type="radio" name="gender" value="Male"> Male
+																			<input type="radio" name="gender" value="Female"> Female
+																			<input type="radio" name="gender" value="Other / Prefer not to answer"> Other / Prefer not to answer
 																		</div>
 																	</div>
 																</div>
@@ -120,11 +121,17 @@
 
 																<div class="row">
 																	<div class="form-group col-md-12">
-																		<label class="col-md-3 control-lable" for="occupation">Occupation</label>
+																		<label class="col-md-3 control-lable" for="occupation">Race</label>
 																		<div class="col-md-7">
-																			<form:input type="text" path="occupation"
-																				id="occupation" class="form-control input-sm" />
-																		</div>
+																		<input type="radio" name="occupation" value="American Indian"> American Indian
+                                                                          <input type="radio" name="occupation" value="African American"> African American
+                                                                          <input type="radio" name="occupation" value="Asian"> Asian<br>
+                                                                          <input type="radio" name="occupation" value="Hispanic or Latino"> Hispanic or Latino
+                                                                          <input type="radio" name="occupation" value="Caucasian"> Caucasian
+                                                                          <input type="radio" name="occupation" value="Multi-Racial"> Multi-Racial
+                                                                          <input type="radio" name="occupation" value="other"> Other
+                                                                          </div>
+
 																	</div>
 																</div>
 														</div>
